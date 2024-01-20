@@ -54,6 +54,23 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece currentPiece = board.getPiece(myPosition);
+        switch (currentPiece.getPieceType()) {
+            case KING:
+                break;
+            case QUEEN:
+                break;
+            case BISHOP:
+                BishopMovesCalculator bishopMovesCalc = new BishopMovesCalculator();
+                return bishopMovesCalc.pieceMoves(board, myPosition);
+            case KNIGHT:
+                break;
+            case ROOK:
+                break;
+            case PAWN:
+                break;
+        }
+
         return new ArrayList<>();
 //        ChessPosition testPos1 = new ChessPosition(1, 4);
 //        ChessPosition testPos2 = new ChessPosition(2, 5);
