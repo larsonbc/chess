@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -53,7 +54,38 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        //throw new RuntimeException("Not implemented");
         return new ArrayList<>();
+//        ChessPosition testPos1 = new ChessPosition(1, 4);
+//        ChessPosition testPos2 = new ChessPosition(2, 5);
+//        ChessPiece testPiece = new ChessPiece(ChessGame.TeamColor.BLACK, PieceType.BISHOP);
+//        ChessMove testMove = new ChessMove(testPos1, testPos2, testPiece.getPieceType());
+//        ArrayList<ChessMove> testList = new ArrayList<>();
+//        testList.add(testMove);
+//        var listBuilder = new StringBuilder();
+//        for (ChessMove move : testList)
+//            listBuilder.append(move.toString());
+//        //System.out.println(listBuilder);
+//        return testList;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
