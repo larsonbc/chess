@@ -57,7 +57,8 @@ public class ChessPiece {
         ChessPiece currentPiece = board.getPiece(myPosition);
         switch (currentPiece.getPieceType()) {
             case KING:
-                break;
+                KingMovesCalculator kingMovesCalc = new KingMovesCalculator();
+                return kingMovesCalc.pieceMoves(board, myPosition);
             case QUEEN:
                 break;
             case BISHOP:
