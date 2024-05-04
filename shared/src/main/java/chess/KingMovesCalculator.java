@@ -14,7 +14,7 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentRow + 1 < 9) && (board.getPiece(new ChessPosition(currentRow + 1, currentCol)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol), null));
         } else {
-            if ((currentRow + 1 < 9) && board.getPiece(new ChessPosition(currentRow + 1, currentCol)).getTeamColor() != teamColor) {
+            if ((currentRow + 1 < 9) && (board.getPiece(new ChessPosition(currentRow + 1, currentCol)).getTeamColor() != teamColor)) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol), null));
             }
         }
@@ -22,7 +22,7 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentCol - 1 > 0) && (board.getPiece(new ChessPosition(currentRow, currentCol - 1)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow, currentCol - 1), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow, currentCol - 1)).getTeamColor() != teamColor) {
+            if ((currentCol - 1 > 0) && board.getPiece(new ChessPosition(currentRow, currentCol - 1)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow, currentCol - 1), null));
             }
         }
@@ -30,15 +30,15 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentCol - 1 > 0) && (currentRow + 1 < 9) && (board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)).getTeamColor() != teamColor) {
+            if ((currentCol - 1 > 0) && (currentRow + 1 < 9) && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), null));
             }
         }
         //down and right
-        if ((currentCol - 1 > 0) && (currentRow - 1 > 0) && (board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)) == null)) {
+        if ((currentCol + 1 < 9) && (currentRow - 1 > 0) && (board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol + 1), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)).getTeamColor() != teamColor) {
+            if ((currentCol + 1 < 9) && (currentRow - 1 > 0) && board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol + 1), null));
             }
         }
@@ -54,7 +54,7 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentRow - 1 > 0) && (board.getPiece(new ChessPosition(currentRow - 1, currentCol)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow - 1, currentCol)).getTeamColor() != teamColor) {
+            if ((currentRow - 1 > 0) && board.getPiece(new ChessPosition(currentRow - 1, currentCol)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol), null));
             }
         }
@@ -62,7 +62,7 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentRow + 1 < 9) && (currentCol + 1 < 9) && (board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)).getTeamColor() != teamColor) {
+            if ((currentRow + 1 < 9) && (currentCol + 1 < 9) && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), null));
             }
         }
@@ -70,7 +70,7 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         if ((currentRow - 1 > 0) && (currentCol - 1 > 0) && (board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)) == null)) {
             kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol - 1), null));
         } else {
-            if (board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)).getTeamColor() != teamColor) {
+            if ((currentRow - 1 > 0) && (currentCol - 1 > 0) && board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)).getTeamColor() != teamColor) {
                 kingMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol - 1), null));
             }
         }
