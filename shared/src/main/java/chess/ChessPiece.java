@@ -70,7 +70,8 @@ public class ChessPiece {
                 RookMovesCalculator rookMovesCalc = new RookMovesCalculator();
                 return rookMovesCalc.pieceMoves(board, myPosition);
             case PAWN:
-                break;
+                PawnMovesCalculator pawnMovesCalc = new PawnMovesCalculator();
+                return pawnMovesCalc.pieceMoves(board, myPosition);
         }
         return new ArrayList<>();
     }
