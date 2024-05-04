@@ -66,7 +66,8 @@ public class ChessPiece {
             case KNIGHT:
                 break;
             case ROOK:
-                break;
+                RookMovesCalculator rookMovesCalc = new RookMovesCalculator();
+                return rookMovesCalc.pieceMoves(board, myPosition);
             case PAWN:
                 break;
         }
@@ -84,5 +85,13 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
     }
 }
