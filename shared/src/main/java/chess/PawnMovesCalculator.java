@@ -28,6 +28,28 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 2, currentCol), null));
                 }
             }
+            //Diagonal up, left capture
+            if (currentRow + 1 < 9 && currentCol - 1 > 0 && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)) != null && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)).getTeamColor() != teamColor) {
+                if (currentRow + 1 == 8) {
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.QUEEN));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.ROOK));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.BISHOP));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.KNIGHT));
+                } else {
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), null));
+                }
+            }
+            //Diagonal up, right capture
+            if (currentRow + 1 < 9 && currentCol + 1 < 9 && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)) != null && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)).getTeamColor() != teamColor) {
+                if (currentRow + 1 == 8) {
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.QUEEN));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.ROOK));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.BISHOP));
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.KNIGHT));
+                } else {
+                    pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), null));
+                }
+            }
 
             //Black Team
         } else {
@@ -68,7 +90,6 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
         }
-
 
         return pawnMoves;
     }
