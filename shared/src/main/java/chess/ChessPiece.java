@@ -60,7 +60,8 @@ public class ChessPiece {
                 KingMovesCalculator kingMovesCalc = new KingMovesCalculator();
                 return kingMovesCalc.pieceMoves(board, myPosition);
             case QUEEN:
-                break;
+                QueenMovesCalculator queenMovesCalc = new QueenMovesCalculator();
+                return queenMovesCalc.pieceMoves(board, myPosition);
             case BISHOP:
                 BishopMovesCalculator bishopMovesCalc = new BishopMovesCalculator();
                 return bishopMovesCalc.pieceMoves(board, myPosition);
