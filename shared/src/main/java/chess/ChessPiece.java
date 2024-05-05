@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -55,27 +54,32 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece currentPiece = board.getPiece(myPosition);
-        switch (currentPiece.getPieceType()) {
-            case KING:
+        return switch (currentPiece.getPieceType()) {
+            case KING -> {
                 KingMovesCalculator kingMovesCalc = new KingMovesCalculator();
-                return kingMovesCalc.pieceMoves(board, myPosition);
-            case QUEEN:
+                yield kingMovesCalc.pieceMoves(board, myPosition);
+            }
+            case QUEEN -> {
                 QueenMovesCalculator queenMovesCalc = new QueenMovesCalculator();
-                return queenMovesCalc.pieceMoves(board, myPosition);
-            case BISHOP:
+                yield queenMovesCalc.pieceMoves(board, myPosition);
+            }
+            case BISHOP -> {
                 BishopMovesCalculator bishopMovesCalc = new BishopMovesCalculator();
-                return bishopMovesCalc.pieceMoves(board, myPosition);
-            case KNIGHT:
+                yield bishopMovesCalc.pieceMoves(board, myPosition);
+            }
+            case KNIGHT -> {
                 KnightMovesCalculator knightMovesCalc = new KnightMovesCalculator();
-                return knightMovesCalc.pieceMoves(board, myPosition);
-            case ROOK:
+                yield knightMovesCalc.pieceMoves(board, myPosition);
+            }
+            case ROOK -> {
                 RookMovesCalculator rookMovesCalc = new RookMovesCalculator();
-                return rookMovesCalc.pieceMoves(board, myPosition);
-            case PAWN:
+                yield rookMovesCalc.pieceMoves(board, myPosition);
+            }
+            case PAWN -> {
                 PawnMovesCalculator pawnMovesCalc = new PawnMovesCalculator();
-                return pawnMovesCalc.pieceMoves(board, myPosition);
-        }
-        return new ArrayList<>();
+                yield pawnMovesCalc.pieceMoves(board, myPosition);
+            }
+        };
     }
 
     @Override
