@@ -118,7 +118,15 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         } else {
-            return true;
+            ArrayList<ChessMove> moves = new ArrayList<>();
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor) {
+                        moves.addAll(validMoves(new ChessPosition(i, j)));
+                    }
+                }
+            }
+            return moves.isEmpty();
         }
     }
 
