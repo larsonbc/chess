@@ -51,24 +51,31 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> moves1 = piece.pieceMoves(board, startPosition);
+        ArrayList<ChessMove> moves2 = new ArrayList<>();
         ChessBoard originalBoard = (ChessBoard) board.clone();
 
-        for (ChessMove move : moves) {
+        //System.out.println(moves1);
+
+        for (ChessMove move : moves1) {
+            //System.out.println("new move: " + move);
             ChessBoard boardClone = (ChessBoard) board.clone();
             setBoard(boardClone);
             board.addPiece(move.getEndPosition(), piece);
-            board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
-            if (isInCheck(piece.getTeamColor())) {
-                moves.remove(move);
+            //board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
+            board.addPiece(startPosition, null);
+            //System.out.println(board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())));
+            if (!isInCheck(piece.getTeamColor())) {
+                moves2.add(move);
             }
+            setBoard(originalBoard);
         }
         setBoard(originalBoard);
 
-        if (moves.isEmpty()) {
+        if (moves2.isEmpty()) {
             return null;
         } else {
-            return moves;
+            return moves2;
         }
     }
 
@@ -82,7 +89,8 @@ public class ChessGame {
         //need to change, possibly move this code to validMoves() method and check for if move is valid (see if move is not in collection that validMoves() returns)
         ChessPiece piece = board.getPiece(move.getStartPosition());
         board.addPiece(move.getEndPosition(), piece);
-        board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
+//        board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
+        board.addPiece(move.getStartPosition(), null);
     }
 
     /**
@@ -92,10 +100,17 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        //System.out.println(board.getPiece(new ChessPosition(4,6)));
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor) {
+//                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor) {
+                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor && board.getPiece(new ChessPosition(i,j)).getTeamColor() != null) {
+
+                    //System.out.println(board.getPiece(new ChessPosition(i,j)));
+//                    System.out.println(i + "," + j);
+//                    System.out.println(board.getPiece(new ChessPosition(i,j)));
                     Collection<ChessMove> moves = board.getPiece(new ChessPosition(i,j)).pieceMoves(board, new ChessPosition(i, j));
+                    //System.out.println("here");
                     for (ChessMove move : moves) {
                         if (board.getPiece(move.getEndPosition()) != null && board.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
                             return true;
@@ -122,7 +137,9 @@ public class ChessGame {
             for (int i = 1; i < 9; i++) {
                 for (int j = 1; j < 9; j++) {
                     if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor) {
-                        moves.addAll(validMoves(new ChessPosition(i, j)));
+                        if (validMoves(new ChessPosition(i, j)) != null) {
+                            moves.addAll(validMoves(new ChessPosition(i, j)));
+                        }
                     }
                 }
             }
