@@ -122,6 +122,12 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), piece);
 //        board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
             board.addPiece(move.getStartPosition(), null);
+            if (piece.getTeamColor() == TeamColor.WHITE && piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getEndPosition().getRow() == 8) {
+                board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(),move.getPromotionPiece() ));
+            }
+            if (piece.getTeamColor() == TeamColor.BLACK && piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getEndPosition().getRow() == 1) {
+                board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(),move.getPromotionPiece() ));
+            }
         }
     }
 
