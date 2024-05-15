@@ -114,7 +114,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        //System.out.println(getTeamTurn());
+        //System.out.println(board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor());
         if (validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move)) {
+            throw new InvalidMoveException();
+            //other tests work if you remove this else if statement
+        } else if (board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor() != getTeamTurn()) {
+            //System.out.println(getTeamTurn());
+            //System.out.println(board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor());
             throw new InvalidMoveException();
         } else {
             //System.out.println("not supposed to be here");
