@@ -84,16 +84,11 @@ public class ChessGame {
             ArrayList<ChessMove> moves2 = new ArrayList<>();
             ChessBoard originalBoard = (ChessBoard) board.clone();
 
-            //System.out.println(moves1);
-
             for (ChessMove move : moves1) {
-                //System.out.println("new move: " + move);
                 ChessBoard boardClone = (ChessBoard) board.clone();
                 setBoard(boardClone);
                 board.addPiece(move.getEndPosition(), piece);
-                //board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
                 board.addPiece(startPosition, null);
-                //System.out.println(board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())));
                 if (!isInCheck(piece.getTeamColor())) {
                     moves2.add(move);
                 }
@@ -114,26 +109,25 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        //System.out.println(getTeamTurn());
-        //System.out.println(board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor());
-        if (validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move)) {
-            throw new InvalidMoveException();
-            //other tests work if you remove this else if statement
-        } else if (board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor() != getTeamTurn()) {
-            //System.out.println(getTeamTurn());
-            //System.out.println(board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor());
+        if (validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move) || board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor() != getTeamTurn()) {
+            //System.out.println("Team Turn: " + getTeamTurn());
+            //System.out.println("Color at move's starting position: " + board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor());
             throw new InvalidMoveException();
         } else {
-            //System.out.println("not supposed to be here");
             ChessPiece piece = board.getPiece(move.getStartPosition());
             board.addPiece(move.getEndPosition(), piece);
-//        board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
             board.addPiece(move.getStartPosition(), null);
             if (piece.getTeamColor() == TeamColor.WHITE && piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getEndPosition().getRow() == 8) {
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(),move.getPromotionPiece() ));
             }
             if (piece.getTeamColor() == TeamColor.BLACK && piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getEndPosition().getRow() == 1) {
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(),move.getPromotionPiece() ));
+            }
+            //getTeamTurn() == TeamColor.WHITE ? setTeamTurn(TeamColor.BLACK) : setTeamTurn(TeamColor.WHITE);
+            if (getTeamTurn() == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(TeamColor.WHITE);
             }
         }
     }
@@ -148,14 +142,8 @@ public class ChessGame {
         //System.out.println(board.getPiece(new ChessPosition(4,6)));
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-//                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor) {
                 if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor && board.getPiece(new ChessPosition(i,j)).getTeamColor() != null) {
-
-                    //System.out.println(board.getPiece(new ChessPosition(i,j)));
-//                    System.out.println(i + "," + j);
-//                    System.out.println(board.getPiece(new ChessPosition(i,j)));
                     Collection<ChessMove> moves = board.getPiece(new ChessPosition(i,j)).pieceMoves(board, new ChessPosition(i, j));
-                    //System.out.println("here");
                     for (ChessMove move : moves) {
                         if (board.getPiece(move.getEndPosition()) != null && board.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
                             return true;
