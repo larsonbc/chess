@@ -50,42 +50,14 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-//        ChessPiece piece = board.getPiece(startPosition);
-//        Collection<ChessMove> moves1 = piece.pieceMoves(board, startPosition);
-//        ArrayList<ChessMove> moves2 = new ArrayList<>();
-//        ChessBoard originalBoard = (ChessBoard) board.clone();
-//
-//        //System.out.println(moves1);
-//
-//        for (ChessMove move : moves1) {
-//            //System.out.println("new move: " + move);
-//            ChessBoard boardClone = (ChessBoard) board.clone();
-//            setBoard(boardClone);
-//            board.addPiece(move.getEndPosition(), piece);
-//            //board.addPiece(move.getStartPosition(), new ChessPiece(null, null));
-//            board.addPiece(startPosition, null);
-//            //System.out.println(board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())));
-//            if (!isInCheck(piece.getTeamColor())) {
-//                moves2.add(move);
-//            }
-//            setBoard(originalBoard);
-//        }
-//        setBoard(originalBoard);
-//
-//        if (moves2.isEmpty()) {
-//            return null;
-//        } else {
-//            return moves2;
-//        }
-
         if (board.getPiece(startPosition) != null) {
             ChessPiece piece = board.getPiece(startPosition);
             Collection<ChessMove> moves1 = piece.pieceMoves(board, startPosition);
             ArrayList<ChessMove> moves2 = new ArrayList<>();
-            ChessBoard originalBoard = (ChessBoard) board.clone();
+            ChessBoard originalBoard = board.clone();
 
             for (ChessMove move : moves1) {
-                ChessBoard boardClone = (ChessBoard) board.clone();
+                ChessBoard boardClone = board.clone();
                 setBoard(boardClone);
                 board.addPiece(move.getEndPosition(), piece);
                 board.addPiece(startPosition, null);
@@ -196,7 +168,6 @@ public class ChessGame {
             }
         }
         return moves.isEmpty() && !isInCheck(teamColor);
-        //return moves.isEmpty();
     }
 
     /**
