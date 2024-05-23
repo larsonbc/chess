@@ -9,11 +9,12 @@ public class MemoryUserDAO implements UserDAO{
 
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
-        if (getUser(username) == null) {
-            users.add(new UserData(username, password, email));
-        } else {
-            throw new DataAccessException("Username taken");
-        }
+//        if (getUser(username) == null) {
+//            users.add(new UserData(username, password, email));
+//        } else {
+//            throw new DataAccessException("username taken");
+//        }
+        users.add(new UserData(username, password, email));
 
     }
 
