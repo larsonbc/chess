@@ -42,21 +42,21 @@ public class UserService {
             memoryUserDAO.createUser(newUser.username(), newUser.password(), newUser.email());
             return memoryAuthDAO.createAuth(newUser);
         } else {
-            throw new DataAccessException("Username taken"); //specs say to throw exception in data access, so this may need to be altered
+            throw new DataAccessException("Error: already taken"); //specs say to throw exception in data access, so this may need to be altered
             //return null;
         }
 
     }
 
     public AuthData login(UserData user) throws DataAccessException {
-        UserData userLogginIn = memoryUserDAO.getUser(user.username());
-        if (userLogginIn != null) {
-            if (Objects.equals(user.password(), userLogginIn.password())) {
+        UserData userLoggingIn = memoryUserDAO.getUser(user.username());
+        if (userLoggingIn != null) {
+            if (Objects.equals(user.password(), userLoggingIn.password())) {
                 return memoryAuthDAO.createAuth(user);
             } else {
-                throw new DataAccessException("Invalid Username and/or Password");
+                throw new DataAccessException("Error: unauthorized");
             }
-        } else throw new DataAccessException("Invalid Username and/or Password");
+        } else throw new DataAccessException("Error: unauthorized");
     }
 
     public void logout(AuthData authData) {

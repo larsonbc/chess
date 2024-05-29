@@ -17,7 +17,7 @@ public class MemoryUserDAO implements UserDAO{
         if (getUser(username) == null) {
             users.add(new UserData(username, password, email));
         } else {
-            throw new DataAccessException("Username taken");
+            throw new DataAccessException("Error: already taken");
         }
         //users.add(new UserData(username, password, email));
 

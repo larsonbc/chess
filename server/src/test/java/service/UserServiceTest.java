@@ -3,8 +3,8 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class UserServiceTest {
         UserData duplicateUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         String actualName = userService.register(testUser).username();
         Exception exception = assertThrows(DataAccessException.class, () -> { userService.register(duplicateUser); });
-        String expectedMessage = "Username taken";
+        String expectedMessage = "Error: already taken";
         String actualMessage = exception.getMessage();
         System.out.println(actualMessage);
         assertTrue(actualMessage.contains(expectedMessage));
@@ -59,17 +59,20 @@ class UserServiceTest {
         UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         String actualAuthToken = userService.register(testUser).authToken();
         Exception exception = assertThrows(DataAccessException.class, () -> userService.login(new UserData("Does Not Exist", "no", "testEmail@email.com")));
-        String expectedMessage = "Invalid Username and/or Password";
+        String expectedMessage = "Error: unauthorized";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
-    public void testSuccessfulLogout() {
+    public void testSuccessfulLogout() throws DataAccessException {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        AuthData authToDelete = userService.register(testUser);
+        userService.logout(authToDelete);
     }
 
     @Test
-    public void clear() throws DataAccessException {
+    public void testClear() throws DataAccessException {
         UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         userService.register(testUser);
         ArrayList<UserData> expected = new ArrayList<>();
