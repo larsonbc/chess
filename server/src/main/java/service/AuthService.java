@@ -1,5 +1,16 @@
 package service;
 
+import dataaccess.MemoryAuthDAO;
+
 public class AuthService {
-    public void deleteAllAuth() {}
+
+    private MemoryAuthDAO memoryAuthDAO;
+
+    public AuthService(MemoryAuthDAO memoryAuthDAO) {
+        this.memoryAuthDAO = memoryAuthDAO;
+    }
+
+    public void clearAuth() {
+        memoryAuthDAO.clearAuth();
+    }
 }
