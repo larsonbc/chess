@@ -13,6 +13,11 @@ public class GameService {
     private MemoryGameDAO memoryGameDAO;
     private MemoryAuthDAO memoryAuthDAO;
 
+    public GameService(MemoryGameDAO memoryGameDAO, MemoryAuthDAO memoryAuthDAO) {
+        this.memoryGameDAO = memoryGameDAO;
+        this.memoryAuthDAO = memoryAuthDAO;
+    }
+
     public int createGame(String authToken, String gameName) throws DataAccessException {
         if (memoryAuthDAO.getAuth(authToken) != null) {
             return memoryGameDAO.createGame(gameName).gameID();
@@ -30,4 +35,9 @@ public class GameService {
     public void deleteAllGames() {
 
     }
+
+    public MemoryAuthDAO getMemoryAuthDAO() {
+        return memoryAuthDAO;
+    }
+
 }

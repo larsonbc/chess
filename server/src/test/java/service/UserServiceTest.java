@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
     private UserService userService;
-    private ArrayList<UserData> expected;
+    //private ArrayList<UserData> expected;
 
     @BeforeEach
     public void setUp() {
         userService = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
-        expected = new ArrayList<>();
+        //expected = new ArrayList<>();
     }
 
     @Test
@@ -41,7 +41,6 @@ class UserServiceTest {
         Exception exception = assertThrows(DataAccessException.class, () -> { userService.register(duplicateUser); });
         String expectedMessage = "Error: already taken";
         String actualMessage = exception.getMessage();
-        System.out.println(actualMessage);
         assertTrue(actualMessage.contains(expectedMessage));
 
     }
