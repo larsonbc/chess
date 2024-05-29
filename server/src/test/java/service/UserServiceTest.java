@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.UserData;
@@ -24,11 +25,24 @@ class UserServiceTest {
     }
 
     @Test
-    public void register() {
+    public void positiveRegisterTest() throws DataAccessException {
         UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         String expectedName = "Test User";
         String actualName = userService.register(testUser).username();
         Assertions.assertEquals(expectedName, actualName);
+
+    }
+
+    @Test
+    public void negativeRegisterTest() throws DataAccessException {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        UserData duplicateUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        String actualName = userService.register(testUser).username();
+        Exception exception = assertThrows(DataAccessException.class, () -> { userService.register(duplicateUser); });
+        String expectedMessage = "Username taken";
+        String actualMessage = exception.getMessage();
+        System.out.println(actualMessage);
+        assertTrue(actualMessage.contains(expectedMessage));
 
     }
 
@@ -41,7 +55,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void clear() {
+    public void clear() throws DataAccessException {
         UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         userService.register(testUser);
         ArrayList<UserData> expected = new ArrayList<>();

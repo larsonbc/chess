@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
@@ -16,7 +17,7 @@ public class UserService {
         this.memoryAuthDAO = memoryAuthDAO;
     }
 
-    public AuthData register(UserData user) {
+    public AuthData register(UserData user) throws DataAccessException {
 //        if (userDAO.getUser(user.username()) == null) {
 //            try {
 //                userDAO.createUser(user.username(), user.password(), user.email());
@@ -39,8 +40,8 @@ public class UserService {
             memoryUserDAO.createUser(newUser.username(), newUser.password(), newUser.email());
             return memoryAuthDAO.createAuth(newUser);
         } else {
-            //throw new DataAccessException("username already exists"); //specs say to throw exception in data access, so this may need to be altered
-            return null;
+            throw new DataAccessException("Username taken"); //specs say to throw exception in data access, so this may need to be altered
+            //return null;
         }
 
     }
