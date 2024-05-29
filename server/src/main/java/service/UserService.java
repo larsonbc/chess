@@ -13,7 +13,7 @@ public class UserService {
     private MemoryUserDAO memoryUserDAO;
     private MemoryAuthDAO memoryAuthDAO;
 
-    public UserService(MemoryUserDAO memoryUserDAO, MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO) {
+    public UserService(MemoryUserDAO memoryUserDAO, MemoryAuthDAO memoryAuthDAO) {
         this.memoryUserDAO = memoryUserDAO;
         this.memoryAuthDAO = memoryAuthDAO;
     }
@@ -41,7 +41,8 @@ public class UserService {
             memoryUserDAO.createUser(newUser.username(), newUser.password(), newUser.email());
             return memoryAuthDAO.createAuth(newUser);
         } else {
-            throw new DataAccessException("username already exists"); //specs say to throw exception in data access, so this may need to be altered
+            //throw new DataAccessException("username already exists"); //specs say to throw exception in data access, so this may need to be altered
+            return null;
         }
 
     }
@@ -56,5 +57,9 @@ public class UserService {
         if (memoryAuthDAO.getAuth(authData.authToken()) != null) {
             memoryAuthDAO.deleteAuth(authData);
         }
+    }
+
+    public void clear() {
+        memoryUserDAO.clearUsers();
     }
 }
