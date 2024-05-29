@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
-    private ArrayList<UserData> users;
+    private ArrayList<UserData> users = new ArrayList<>();
 
 //    public MemoryUserDAO(ArrayList<UserData> users) {
 //        this.users = users;
 //    }
 
     @Override
-    public void createUser(String username, String password, String email) throws DataAccessException {
+    public void createUser(String username, String password, String email) { //add throws DataAccessException
 //        if (getUser(username) == null) {
 //            users.add(new UserData(username, password, email));
 //        } else {

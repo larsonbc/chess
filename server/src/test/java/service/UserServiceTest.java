@@ -3,6 +3,8 @@ package service;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,19 +24,30 @@ class UserServiceTest {
     }
 
     @Test
-    void register() {
+    public void register() {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        String expectedName = "Test User";
+        String actualName = userService.register(testUser).username();
+        Assertions.assertEquals(expectedName, actualName);
+
     }
 
     @Test
-    void login() {
+    public void login() {
     }
 
     @Test
-    void logout() {
+    public void logout() {
     }
 
     @Test
-    void clear() {
+    public void clear() {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        userService.register(testUser);
+        ArrayList<UserData> expected = new ArrayList<>();
+        userService.clear();
+        ArrayList<UserData> actual = userService.getMemoryUserDAO().getUsers();
+        Assertions.assertEquals(expected,actual);
 
     }
 }

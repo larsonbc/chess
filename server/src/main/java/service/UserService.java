@@ -1,8 +1,6 @@
 package service;
 
-import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
@@ -18,7 +16,7 @@ public class UserService {
         this.memoryAuthDAO = memoryAuthDAO;
     }
 
-    public AuthData register(UserData user) throws DataAccessException {
+    public AuthData register(UserData user) {
 //        if (userDAO.getUser(user.username()) == null) {
 //            try {
 //                userDAO.createUser(user.username(), user.password(), user.email());
@@ -61,5 +59,9 @@ public class UserService {
 
     public void clear() {
         memoryUserDAO.clearUsers();
+    }
+
+    public MemoryUserDAO getMemoryUserDAO() {
+        return memoryUserDAO;
     }
 }
