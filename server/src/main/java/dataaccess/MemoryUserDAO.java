@@ -33,6 +33,13 @@ public class MemoryUserDAO implements UserDAO{
         return null;
     }
 
+//    public boolean authenticatePassword(String password) {
+//        for (UserData user : users) {
+//            return user.password().equals(password);
+//        }
+//        return false;
+//    }
+
     @Override
     public void clearUsers() {
         users.clear();

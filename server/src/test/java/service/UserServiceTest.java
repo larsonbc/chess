@@ -47,11 +47,25 @@ class UserServiceTest {
     }
 
     @Test
-    public void login() {
+    public void positiveLoginTest() throws DataAccessException {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        String firstActualAuthToken = userService.register(testUser).authToken();
+        String secondActualAuthToken = userService.login(testUser).authToken();
+        Assertions.assertNotEquals(firstActualAuthToken, secondActualAuthToken);
     }
 
     @Test
-    public void logout() {
+    public void testUnregisteredUserLogin() throws DataAccessException {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        String actualAuthToken = userService.register(testUser).authToken();
+        Exception exception = assertThrows(DataAccessException.class, () -> userService.login(new UserData("Does Not Exist", "no", "testEmail@email.com")));
+        String expectedMessage = "Invalid Username and/or Password";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testSuccessfulLogout() {
     }
 
     @Test

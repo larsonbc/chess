@@ -6,6 +6,8 @@ import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 
+import java.util.Objects;
+
 public class UserService {
 
     //private MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
@@ -46,10 +48,15 @@ public class UserService {
 
     }
 
-    public AuthData login(UserData user) {
-        if (memoryUserDAO.getUser(user.username()) != null) {
-            return memoryAuthDAO.createAuth(user);
-        } else return null; //may need to be edited
+    public AuthData login(UserData user) throws DataAccessException {
+        UserData userLogginIn = memoryUserDAO.getUser(user.username());
+        if (userLogginIn != null) {
+            if (Objects.equals(user.password(), userLogginIn.password())) {
+                return memoryAuthDAO.createAuth(user);
+            } else {
+                throw new DataAccessException("Invalid Username and/or Password");
+            }
+        } else throw new DataAccessException("Invalid Username and/or Password");
     }
 
     public void logout(AuthData authData) {
