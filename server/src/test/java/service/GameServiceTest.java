@@ -92,6 +92,11 @@ class GameServiceTest {
     }
 
     @Test
-    void deleteAllGames() {
+    void testClearGames() throws DataAccessException {
+        int gameID = gameService.createGame(testAuth.authToken(), "First Game");
+        ArrayList<GameData> expected = new ArrayList<>();
+        gameService.clear();
+        ArrayList<GameData> actual = gameService.listGames(testAuth.authToken());
+        Assertions.assertEquals(actual, expected);
     }
 }

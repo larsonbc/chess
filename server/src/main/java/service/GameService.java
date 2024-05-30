@@ -41,8 +41,8 @@ public class GameService {
         } else throw new DataAccessException("Error: unauthorized");
     }
 
-    public void deleteAllGames() {
-
+    public void clear() {
+        memoryGameDAO.clearGames();
     }
 
     public MemoryAuthDAO getMemoryAuthDAO() {
