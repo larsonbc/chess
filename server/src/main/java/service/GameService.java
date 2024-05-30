@@ -1,10 +1,11 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
+import model.AuthData;
 import model.GameData;
+import request.JoinGameRequest;
 
 import java.util.ArrayList;
 
@@ -30,8 +31,14 @@ public class GameService {
         } else throw new DataAccessException("Error: unauthorized");
     }
 
-    public void joinGame(ChessGame.TeamColor playerColor, int gameID) {
-
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        AuthData authData = memoryAuthDAO.getAuth(joinGameRequest.authToken());
+        if (authData != null) {
+            GameData game = memoryGameDAO.getGame(joinGameRequest.gameID());
+            if (game != null) {
+                memoryGameDAO.updateGame(joinGameRequest.gameID(), authData.username(), joinGameRequest.teamColor());
+            } else throw new DataAccessException("Game doesn't exit");
+        } else throw new DataAccessException("Error: unauthorized");
     }
 
     public void deleteAllGames() {

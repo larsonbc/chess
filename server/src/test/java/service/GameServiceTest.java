@@ -10,6 +10,7 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import request.JoinGameRequest;
 
 import java.util.ArrayList;
 
@@ -73,7 +74,21 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame() {
+    void testJoinGameWhite() throws DataAccessException {
+        int newGameID = gameService.createGame(testAuth.authToken(), "New Game");
+        gameService.joinGame(new JoinGameRequest(testAuth.authToken(), ChessGame.TeamColor.WHITE, newGameID));
+        ArrayList<GameData> expected = new ArrayList<>();
+        expected.add(new GameData(1, "TestUser", null, "New Game", new ChessGame()));
+        ArrayList<GameData> actual = gameService.listGames(testAuth.authToken());
+        Assertions.assertEquals(actual, expected);
+    }
+
+    @Test
+    void testJoinGameWhiteUnauthorized() throws DataAccessException {
+        Exception exception = assertThrows(DataAccessException.class, () -> { gameService.joinGame(new JoinGameRequest("FakeAuthToken", ChessGame.TeamColor.WHITE, 1)); });
+        String expectedMessage = "Error: unauthorized";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
