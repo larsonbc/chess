@@ -5,6 +5,8 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
+import request.LoginRequest;
+import result.LoginResult;
 
 import java.util.Objects;
 
@@ -53,6 +55,18 @@ public class UserService {
         if (userLoggingIn != null) {
             if (Objects.equals(user.password(), userLoggingIn.password())) {
                 return memoryAuthDAO.createAuth(user);
+            } else {
+                throw new DataAccessException("Error: unauthorized");
+            }
+        } else throw new DataAccessException("Error: unauthorized");
+    }
+
+    public LoginResult login2(LoginRequest request) throws DataAccessException {
+        UserData userLoggingIn = memoryUserDAO.getUser(request.username());
+        if (userLoggingIn != null) {
+            if (Objects.equals(request.password(), userLoggingIn.password())) {
+                //return memoryAuthDAO.createAuth(userLoggingIn);
+                return new LoginResult(memoryAuthDAO.createAuth(userLoggingIn).username(), memoryAuthDAO.createAuth(userLoggingIn).authToken());
             } else {
                 throw new DataAccessException("Error: unauthorized");
             }
