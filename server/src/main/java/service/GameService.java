@@ -24,8 +24,10 @@ public class GameService {
         } else throw new DataAccessException("Error: unauthorized");
     }
 
-    public ArrayList<GameData> listGames(String authToken) {
-        return null;
+    public ArrayList<GameData> listGames(String authToken) throws DataAccessException {
+        if (memoryAuthDAO.getAuth(authToken) != null) {
+            return (ArrayList<GameData>) memoryGameDAO.listGames();
+        } else throw new DataAccessException("Error: unauthorized");
     }
 
     public void joinGame(ChessGame.TeamColor playerColor, int gameID) {

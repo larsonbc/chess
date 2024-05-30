@@ -1,13 +1,10 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 public class MemoryGameDAO implements GameDAO{
 
@@ -34,7 +31,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public Collection<GameData> listGames() {
-        return List.of();
+        return games;
     }
 
     @Override
