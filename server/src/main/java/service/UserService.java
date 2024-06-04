@@ -6,6 +6,7 @@ import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 import request.LoginRequest;
+import request.RegisterRequest;
 import result.LoginResult;
 
 import java.util.Objects;
@@ -48,6 +49,17 @@ public class UserService {
             //return null;
         }
 
+    }
+
+    public LoginResult register2(RegisterRequest request) throws DataAccessException {
+        if (memoryUserDAO.getUser(request.username()) == null) {
+            UserData newUser = new UserData(request.username(), request.password(), request.email());
+            memoryUserDAO.createUser(newUser.username(), newUser.password(), newUser.email());
+            AuthData newAuth = memoryAuthDAO.createAuth(newUser);
+            return new LoginResult(newAuth.username(), newAuth.authToken());
+        } else {
+            throw new DataAccessException("Error: already taken");
+        }
     }
 
     public AuthData login(UserData user) throws DataAccessException {
