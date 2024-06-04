@@ -66,7 +66,8 @@ public class UserService {
         if (userLoggingIn != null) {
             if (Objects.equals(request.password(), userLoggingIn.password())) {
                 //return memoryAuthDAO.createAuth(userLoggingIn);
-                return new LoginResult(memoryAuthDAO.createAuth(userLoggingIn).username(), memoryAuthDAO.createAuth(userLoggingIn).authToken());
+                AuthData newAuth = memoryAuthDAO.createAuth(userLoggingIn);
+                return new LoginResult(newAuth.username(), newAuth.authToken());
             } else {
                 throw new DataAccessException("Error: unauthorized");
             }

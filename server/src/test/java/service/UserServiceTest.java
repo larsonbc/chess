@@ -8,6 +8,7 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import request.LoginRequest;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,15 @@ class UserServiceTest {
         UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
         String firstActualAuthToken = userService.register(testUser).authToken();
         String secondActualAuthToken = userService.login(testUser).authToken();
+        Assertions.assertNotEquals(firstActualAuthToken, secondActualAuthToken);
+    }
+
+    @Test
+    public void positiveLogin2Test() throws DataAccessException {
+        UserData testUser = new UserData("Test User", "testPassword", "testEmail@email.com");
+        String firstActualAuthToken = userService.register(testUser).authToken();
+        LoginRequest request = new LoginRequest(testUser.username(), testUser.password());
+        String secondActualAuthToken = userService.login2(request).authToken();
         Assertions.assertNotEquals(firstActualAuthToken, secondActualAuthToken);
     }
 

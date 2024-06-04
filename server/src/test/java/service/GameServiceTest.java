@@ -92,6 +92,15 @@ class GameServiceTest {
     }
 
     @Test
+    void testJoinNonExistingGame() throws DataAccessException {
+        int newGameID = gameService.createGame(testAuth.authToken(), "New Game");
+        Exception exception = assertThrows(DataAccessException.class, () -> { gameService.joinGame(new JoinGameRequest(testAuth.authToken(), ChessGame.TeamColor.WHITE, 7)); });
+        String expectedMessage = "Game doesn't exit";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void testClearGames() throws DataAccessException {
         int gameID = gameService.createGame(testAuth.authToken(), "First Game");
         ArrayList<GameData> expected = new ArrayList<>();
