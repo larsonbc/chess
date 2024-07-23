@@ -1,10 +1,6 @@
 package handler;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import request.LoginRequest;
-import request.RegisterRequest;
-import result.LoginResult;
 import service.UserService;
 
 public class RegisterHandler {
