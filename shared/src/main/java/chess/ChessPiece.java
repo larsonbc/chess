@@ -67,6 +67,9 @@ public class ChessPiece {
             case PAWN:
                 PawnMovesCalculator pawnMovesCalculator = new PawnMovesCalculator();
                 return pawnMovesCalculator.calculateMoves(board, myPosition);
+            case QUEEN:
+                QueenMovesCalculator queenMovesCalculator = new QueenMovesCalculator();
+                return queenMovesCalculator.calculateMoves(board, myPosition);
             default:
                 return List.of();
         }
