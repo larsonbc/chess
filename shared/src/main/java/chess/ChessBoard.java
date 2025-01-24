@@ -22,7 +22,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece;
+        squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -33,7 +33,15 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1];
+        return squares[position.getRow() - 1][position.getColumn() - 1];
+    }
+
+    public boolean isVacant(int row, int col) {
+        return squares[row - 1][col - 1] == null;
+    }
+
+    public boolean isOpponent(int row, int col, ChessPiece piece) {
+        return !isVacant(row, col) && piece.getTeamColor() != squares[row - 1][col - 1].getTeamColor();
     }
 
     /**
