@@ -82,7 +82,7 @@ public class ChessPiece implements Cloneable{
                 return pawnMovesCalculator.calculateMoves(board, myPosition);
             case QUEEN:
                 BishopMovesCalculator bishopMovesCalculator2 = new BishopMovesCalculator();
-                ArrayList<ChessMove> queenMoves = new ArrayList<>();
+                ArrayList<ChessMove> queenMoves;
                 queenMoves = bishopMovesCalculator2.calculateMoves(board, myPosition);
                 RookMovesCalculator rookMovesCalculator2 = new RookMovesCalculator();
                 queenMoves.addAll(rookMovesCalculator2.calculateMoves(board, myPosition));
