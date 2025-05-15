@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -80,8 +81,12 @@ public class ChessPiece implements Cloneable{
                 PawnMovesCalculator pawnMovesCalculator = new PawnMovesCalculator();
                 return pawnMovesCalculator.calculateMoves(board, myPosition);
             case QUEEN:
-                QueenMovesCalculator queenMovesCalculator = new QueenMovesCalculator();
-                return queenMovesCalculator.calculateMoves(board, myPosition);
+                BishopMovesCalculator bishopMovesCalculator2 = new BishopMovesCalculator();
+                ArrayList<ChessMove> queenMoves = new ArrayList<>();
+                queenMoves = bishopMovesCalculator2.calculateMoves(board, myPosition);
+                RookMovesCalculator rookMovesCalculator2 = new RookMovesCalculator();
+                queenMoves.addAll(rookMovesCalculator2.calculateMoves(board, myPosition));
+                return queenMoves;
             case ROOK:
                 RookMovesCalculator rookMovesCalculator = new RookMovesCalculator();
                 return rookMovesCalculator.calculateMoves(board, myPosition);

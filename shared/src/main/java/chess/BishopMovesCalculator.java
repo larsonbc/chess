@@ -1,11 +1,10 @@
 package chess;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class BishopMovesCalculator implements  PieceMovesCalculator{
     @Override
-    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
+    public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> bishopMoves  = new ArrayList<>();
         ChessPiece piece = board.getPiece(position);
         int row = position.getRow();

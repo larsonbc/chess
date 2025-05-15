@@ -82,7 +82,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move) || board.getPiece(new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn())).getTeamColor() != getTeamTurn()) {
+        if (validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move)
+                || board.getPiece(new ChessPosition(move.getStartPosition().getRow(),
+                move.getStartPosition().getColumn())).getTeamColor() != getTeamTurn()) {
             throw new InvalidMoveException();
         } else {
             ChessPiece piece = board.getPiece(move.getStartPosition());
@@ -112,10 +114,12 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor && board.getPiece(new ChessPosition(i,j)).getTeamColor() != null) {
+                if (board.getPiece(new ChessPosition(i,j)) != null && board.getPiece(new ChessPosition(i,j)).getTeamColor()
+                        != teamColor && board.getPiece(new ChessPosition(i,j)).getTeamColor() != null) {
                     Collection<ChessMove> moves = board.getPiece(new ChessPosition(i,j)).pieceMoves(board, new ChessPosition(i, j));
                     for (ChessMove move : moves) {
-                        if (board.getPiece(move.getEndPosition()) != null && board.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                        if (board.getPiece(move.getEndPosition()) != null && board.getPiece(move.getEndPosition()).getPieceType()
+                                == ChessPiece.PieceType.KING) {
                             return true;
                         }
                     }

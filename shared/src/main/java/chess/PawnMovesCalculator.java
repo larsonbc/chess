@@ -1,12 +1,10 @@
 package chess;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class PawnMovesCalculator implements PieceMovesCalculator{
-
     @Override
-    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
+    public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         ChessGame.TeamColor teamColor = board.getPiece(position).getTeamColor();
         ArrayList<ChessMove> pawnMoves = new ArrayList<>();
         int currentRow = position.getRow();
@@ -29,7 +27,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
             //Diagonal up, left capture
-            if (currentRow + 1 < 9 && currentCol - 1 > 0 && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)) != null && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)).getTeamColor() != teamColor) {
+            if (currentRow + 1 < 9 && currentCol - 1 > 0 && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)) != null
+                    && board.getPiece(new ChessPosition(currentRow + 1, currentCol - 1)).getTeamColor() != teamColor) {
                 if (currentRow + 1 == 8) {
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.QUEEN));
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol - 1), ChessPiece.PieceType.ROOK));
@@ -40,7 +39,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
             //Diagonal up, right capture
-            if (currentRow + 1 < 9 && currentCol + 1 < 9 && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)) != null && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)).getTeamColor() != teamColor) {
+            if (currentRow + 1 < 9 && currentCol + 1 < 9 && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)) != null
+                    && board.getPiece(new ChessPosition(currentRow + 1, currentCol + 1)).getTeamColor() != teamColor) {
                 if (currentRow + 1 == 8) {
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.QUEEN));
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow + 1, currentCol + 1), ChessPiece.PieceType.ROOK));
@@ -68,7 +68,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
             //Diagonal down, left capture
-            if (currentRow - 1 > 0 && currentCol - 1 > 0 && board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)) != null && board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)).getTeamColor() != teamColor) {
+            if (currentRow - 1 > 0 && currentCol - 1 > 0 && board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)) != null
+                    && board.getPiece(new ChessPosition(currentRow - 1, currentCol - 1)).getTeamColor() != teamColor) {
                 if (currentRow - 1 == 1) {
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol - 1), ChessPiece.PieceType.QUEEN));
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol - 1), ChessPiece.PieceType.ROOK));
@@ -79,7 +80,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 }
             }
             //Diagonal down, right capture
-            if (currentRow - 1 > 0 && currentCol + 1 < 9 && board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)) != null && board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)).getTeamColor() != teamColor) {
+            if (currentRow - 1 > 0 && currentCol + 1 < 9 && board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)) != null
+                    && board.getPiece(new ChessPosition(currentRow - 1, currentCol + 1)).getTeamColor() != teamColor) {
                 if (currentRow - 1 == 1) {
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol + 1), ChessPiece.PieceType.QUEEN));
                     pawnMoves.add(new ChessMove(position, new ChessPosition(currentRow - 1, currentCol + 1), ChessPiece.PieceType.ROOK));
