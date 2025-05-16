@@ -1,25 +1,24 @@
 package handler;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
-import request.LoginRequest;
 import request.RegisterRequest;
+import result.RegisterResult;
+import service.UserService;
+import spark.Request;
+import spark.Response;
 
 public class RegisterHandler {
 
-    public Object handleRequest(Object req, Object res) {//may want to try generics: Class<T> responseClass
+    public UserService userService;
 
+    public RegisterHandler(UserService userService) {
+        this.userService = userService;
+    }
+
+    public Object handleRequest(Request req, Response res) {//may want to try generics: Class<T> responseClass
         var serializer = new Gson();
-        var game = new ChessGame();
-
-        // serialize to JSON
-        var json = serializer.toJson(game);
-
-        //deserialize back to ChessGame
-        game = serializer.fromJson(json, ChessGame.class);
-
-        //RegisterRequest request = (RegisterRequest)gson.fromJson(req, LoginRequest.class);
-
-        return null;
+        RegisterRequest request = serializer.fromJson(req.body(), RegisterRequest.class);
+        RegisterResult result = userService.register(request);
+        return serializer.toJson(result);
     }
 }
