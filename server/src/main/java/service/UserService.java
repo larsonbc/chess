@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
 import request.LoginRequest;
@@ -18,13 +19,13 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
        if (userDAO.createUser(registerRequest.username(), registerRequest.password(), registerRequest.email()) != null) {
            AuthData newAuth = authDAO.createAuthToken(registerRequest.username());
            return new RegisterResult(newAuth.username(), newAuth.authToken());
+       } else {
+           throw new DataAccessException(403, "Error: already taken");
        }
-       System.out.println("Register Unsuccessful, returning null");
-        return null;
     }
 
     public LoginResult login(LoginRequest loginRequest) {

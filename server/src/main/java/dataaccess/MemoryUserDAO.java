@@ -9,14 +9,13 @@ public class MemoryUserDAO implements UserDAO{
     ArrayList<UserData> users = new ArrayList<>();
 
     @Override
-    public UserData createUser(String username, String password, String email) {
+    public UserData createUser(String username, String password, String email) throws DataAccessException {
         if (getUser(username) == null) {
             UserData newUser = new UserData(username, password, email);
             users.add(newUser);
             return newUser;
         } else {
-            System.out.println("User already exists");
-            return null;
+            throw new DataAccessException(403, "Error: already taken");
         }
     }
 

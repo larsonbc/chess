@@ -1,9 +1,6 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import handler.ClearDBHandler;
 import handler.RegisterHandler;
 import service.UserService;
@@ -30,8 +27,20 @@ public class Server {
         Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
         Spark.delete("/db", (req, res) -> (clearDBHandler.handleRequest(req, res)));
 
+        Spark.exception(DataAccessException.class, this::errorHandler);
+
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    public void errorHandler(DataAccessException e, Request req, Response res) {
+//        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+//        res.type("application/json");
+//        res.status(500);
+//        res.body(body);
+//        return body;
+        res.status(e.StatusCode());
+        res.body(e.toJson());
     }
 
     public void stop() {
