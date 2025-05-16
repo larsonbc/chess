@@ -3,6 +3,7 @@ package server;
 import dataaccess.*;
 import handler.ClearDBHandler;
 import handler.LoginHandler;
+import handler.LogoutHandler;
 import handler.RegisterHandler;
 import service.UserService;
 import spark.*;
@@ -14,6 +15,7 @@ public class Server {
     UserService userService = new UserService(userDAO, authDAO);
     RegisterHandler registerHandler = new RegisterHandler(userService);
     LoginHandler loginHandler = new LoginHandler(userService);
+    LogoutHandler logoutHandler = new LogoutHandler(userService);
     ClearDBHandler clearDBHandler = new ClearDBHandler(userService);
 
     public int run(int desiredPort) {
@@ -29,6 +31,7 @@ public class Server {
         Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
         Spark.delete("/db", (req, res) -> (clearDBHandler.handleRequest(req, res)));
         Spark.post("/session", (req, res) -> (loginHandler.handleLogin(req, res)));
+        Spark.delete("/session", (req, res) -> (logoutHandler.handleLogout(req, res)));
 
         Spark.exception(DataAccessException.class, this::errorHandler);
 
@@ -37,11 +40,6 @@ public class Server {
     }
 
     public void errorHandler(DataAccessException e, Request req, Response res) {
-//        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
-//        res.type("application/json");
-//        res.status(500);
-//        res.body(body);
-//        return body;
         res.status(e.StatusCode());
         res.body(e.toJson());
     }

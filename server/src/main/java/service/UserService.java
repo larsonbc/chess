@@ -8,9 +8,8 @@ import model.UserData;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
-
-import java.util.Objects;
 
 public class UserService {
 
@@ -51,14 +50,38 @@ public class UserService {
         }
     }
 
-    public void logout(){} //complete later
+//    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
+//        if (logoutRequest.authToken() == null) {
+//            throw new DataAccessException(500, "Error, bad request");
+//        }
+//        if (authDAO.getAuthToken(logoutRequest.authToken()) == null) {
+//            throw new DataAccessException(400, "Error, bad request");
+//        } else {
+//            if (authDAO.deleteAuth(logoutRequest.authToken())) {
+//                return new LogoutResult();
+//            } else {
+//                throw new DataAccessException(400, "Error, bad request");
+//            }
+//        }
+//    }
+
+    public LogoutResult logout(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException(500, "Error: no authToken found");
+        }
+        if (authDAO.getAuthToken(authToken) == null) {
+            throw new DataAccessException(401, "Error: unauthorized");
+        } else {
+            if (authDAO.deleteAuth(authToken)) {
+                return new LogoutResult();
+            } else {
+                throw new DataAccessException(500, "Error: unable to logout");
+            }
+        }
+    }
 
     public void clear() throws DataAccessException {
         userDAO.clearUsers();
     }
-
-//    public boolean checkFields(LoginRequest loginRequest) {
-//
-//    }
 
 }
