@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import result.ClearResult;
 import service.UserService;
 import spark.Request;
@@ -13,7 +14,7 @@ public class ClearDBHandler {
         this.userService = userService;
     }
 
-    public Object handleRequest(Request req, Response res) {
+    public Object handleRequest(Request req, Response res) throws DataAccessException {
         userService.clear();
         var serializer = new Gson();
         return serializer.toJson(new ClearResult());

@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
+import model.UserData;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.LoginResult;
@@ -33,14 +34,31 @@ public class UserService {
        }
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
-        return null;
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        if (loginRequest.username() == null || loginRequest.password() == null) {
+            throw new DataAccessException(400, "Error, bad request");
+        }
+        UserData user = userDAO.getUser(loginRequest.username());
+        if (user != null) {
+            if (!loginRequest.password().equals(user.password())) {
+                throw new DataAccessException(401, "Error: unauthorized");
+            } else {
+                AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
+                return new LoginResult(newAuth.username(), newAuth.authToken());
+            }
+        } else {
+            throw new DataAccessException(401, "Error, unauthorized");
+        }
     }
 
     public void logout(){} //complete later
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         userDAO.clearUsers();
     }
+
+//    public boolean checkFields(LoginRequest loginRequest) {
+//
+//    }
 
 }

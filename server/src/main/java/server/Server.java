@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.*;
 import handler.ClearDBHandler;
+import handler.LoginHandler;
 import handler.RegisterHandler;
 import service.UserService;
 import spark.*;
@@ -12,6 +13,7 @@ public class Server {
     AuthDAO authDAO = new MemoryAuthDAO();
     UserService userService = new UserService(userDAO, authDAO);
     RegisterHandler registerHandler = new RegisterHandler(userService);
+    LoginHandler loginHandler = new LoginHandler(userService);
     ClearDBHandler clearDBHandler = new ClearDBHandler(userService);
 
     public int run(int desiredPort) {
@@ -26,6 +28,7 @@ public class Server {
 
         Spark.post("/user", (req, res) -> (registerHandler.handleRequest(req, res)));
         Spark.delete("/db", (req, res) -> (clearDBHandler.handleRequest(req, res)));
+        Spark.post("/session", (req, res) -> (loginHandler.handleLogin(req, res)));
 
         Spark.exception(DataAccessException.class, this::errorHandler);
 

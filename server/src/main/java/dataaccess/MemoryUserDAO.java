@@ -30,7 +30,11 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public void clearUsers() {
-        users.clear();
+    public void clearUsers() throws DataAccessException {
+        try {
+            users.clear();
+        } catch (Exception e) {
+            throw new DataAccessException(500, "Error: Unable to clear");
+        }
     }
 }
