@@ -9,6 +9,8 @@ import request.RegisterRequest;
 import result.LoginResult;
 import result.RegisterResult;
 
+import java.util.Objects;
+
 public class UserService {
 
     private final UserDAO userDAO;
@@ -20,6 +22,9 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
        if (userDAO.createUser(registerRequest.username(), registerRequest.password(), registerRequest.email()) != null) {
            AuthData newAuth = authDAO.createAuthToken(registerRequest.username());
            return new RegisterResult(newAuth.username(), newAuth.authToken());
