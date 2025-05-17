@@ -19,6 +19,7 @@ public class Server {
     ClearDBHandler clearDBHandler = new ClearDBHandler(userService);
     CreateGameHandler createGameHandler = new CreateGameHandler(gameService);
     JoinGameHandler joinGameHandler = new JoinGameHandler(gameService);
+    ListGamesHandler listGamesHandler = new ListGamesHandler(gameService);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -36,6 +37,7 @@ public class Server {
         Spark.delete("/session", (req, res) -> (logoutHandler.handleLogout(req, res)));
         Spark.post("/game", (req, res) -> (createGameHandler.handleCreateGame(req, res)));
         Spark.put("/game", (req, res) -> (joinGameHandler.handleJoinGame(req, res)));
+        Spark.get("/game", (req, res) -> (listGamesHandler.handleListGames(req, res)));
 
         Spark.exception(DataAccessException.class, this::errorHandler);
 

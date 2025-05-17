@@ -7,8 +7,10 @@ import model.AuthData;
 import model.GameData;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
+import request.ListGamesRequest;
 import result.CreateGameResult;
 import result.JoinGameResult;
+import result.ListGamesResult;
 
 public class GameService {
 
@@ -51,5 +53,16 @@ public class GameService {
         } else {
             throw new DataAccessException(400, "Error: bad request");
         }
+    }
+
+    public ListGamesResult listGames(String authToken, ListGamesRequest listRequest) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        AuthData auth = authDAO.getAuth(authToken);
+        if (auth.authToken() == null) {
+            throw new DataAccessException(401, "Error: unauthorized");
+        }
+        return new ListGamesResult(gameDAO.listGames());
     }
 }

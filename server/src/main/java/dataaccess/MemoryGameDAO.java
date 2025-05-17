@@ -34,7 +34,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGames() {
-        return null;
+        return games;
     }
 
     @Override
