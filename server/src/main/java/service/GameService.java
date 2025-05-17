@@ -3,9 +3,12 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.AuthData;
 import model.GameData;
 import request.CreateGameRequest;
+import request.JoinGameRequest;
 import result.CreateGameResult;
+import result.JoinGameResult;
 
 public class GameService {
 
@@ -29,6 +32,24 @@ public class GameService {
         } else {
             GameData newGame = gameDAO.createGame(createRequest.gameName());
             return new CreateGameResult(newGame.gameID());
+        }
+    }
+
+    public JoinGameResult joinGame(String authToken, JoinGameRequest joinRequest) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        AuthData auth = authDAO.getAuth(authToken);
+        if (auth.authToken() == null) {
+            throw new DataAccessException(401, "Error: unauthorized");
+        }
+        if (gameDAO.getGame(joinRequest.gameID()) == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        if (gameDAO.updateGame(joinRequest.playerColor(), joinRequest.gameID(), auth.username())) {
+            return new JoinGameResult();
+        } else {
+            throw new DataAccessException(400, "Error: bad request");
         }
     }
 }

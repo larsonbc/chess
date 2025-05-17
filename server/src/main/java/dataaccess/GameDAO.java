@@ -8,5 +8,5 @@ public interface GameDAO {
     GameData createGame(String gameName) throws DataAccessException;
     GameData getGame(int gameID);
     ArrayList<GameData> listGames();
-    boolean updateGame(String playerColor, int gameID);
+    boolean updateGame(String playerColor, int gameID, String username) throws DataAccessException;
 }
