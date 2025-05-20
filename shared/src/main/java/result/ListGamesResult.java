@@ -1,8 +1,8 @@
 package result;
 
-import model.GameData;
+import model.GameSummary;
 
 import java.util.ArrayList;
 
-public record ListGamesResult(ArrayList<GameData> games) {
+public record ListGamesResult(ArrayList<GameSummary> summaries) {
 }

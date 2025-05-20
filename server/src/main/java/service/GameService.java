@@ -5,12 +5,16 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import model.GameSummary;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
 import request.ListGamesRequest;
 import result.CreateGameResult;
 import result.JoinGameResult;
 import result.ListGamesResult;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class GameService {
 
@@ -63,6 +67,16 @@ public class GameService {
         if (auth.authToken() == null) {
             throw new DataAccessException(401, "Error: unauthorized");
         }
-        return new ListGamesResult(gameDAO.listGames());
+        ArrayList<GameData> fullGames = (gameDAO.listGames());
+        ArrayList<GameSummary> summaries = new ArrayList<>();
+        for (GameData game : fullGames) {
+            GameSummary newSummary = new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
+            summaries.add(newSummary);
+        }
+        return new ListGamesResult(summaries);
+//        ArrayList<GameSummary> summaries = (ArrayList<GameSummary>) fullGames.stream().map(game -> new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()))
+//                .toList();
+//        return new ListGamesResult(summaries);
+        //return new ListGamesResult(gameDAO.listGames());
     }
 }
