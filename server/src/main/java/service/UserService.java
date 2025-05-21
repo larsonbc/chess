@@ -46,7 +46,7 @@ public class UserService {
                 return new LoginResult(newAuth.username(), newAuth.authToken());
             }
         } else {
-            throw new DataAccessException(401, "Error, unauthorized");
+            throw new DataAccessException(401, "Error: unauthorized");
         }
     }
 

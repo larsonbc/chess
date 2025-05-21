@@ -73,10 +73,6 @@ public class GameService {
             summaries.add(newSummary);
         }
         return new ListGamesResult(summaries);
-//        ArrayList<GameSummary> summaries = (ArrayList<GameSummary>) fullGames.stream().map(game -> new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()))
-//                .toList();
-//        return new ListGamesResult(summaries);
-        //return new ListGamesResult(gameDAO.listGames());
     }
 
     public void clear() throws DataAccessException {
