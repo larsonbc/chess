@@ -49,7 +49,8 @@ public class MemoryGameDAO implements GameDAO{
                 index = i;
             }
         }
-        if ((oldGame.whiteUsername() != null && Objects.equals(playerColor, "WHITE")) || (oldGame.blackUsername() != null && Objects.equals(playerColor, "BLACK"))) {
+        if ((oldGame.whiteUsername() != null && Objects.equals(playerColor, "WHITE")) ||
+                (oldGame.blackUsername() != null && Objects.equals(playerColor, "BLACK"))) {
             throw new DataAccessException(403, "Error: already taken");
         }
         GameData updatedGame;

@@ -50,21 +50,6 @@ public class UserService {
         }
     }
 
-//    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
-//        if (logoutRequest.authToken() == null) {
-//            throw new DataAccessException(500, "Error, bad request");
-//        }
-//        if (authDAO.getAuthToken(logoutRequest.authToken()) == null) {
-//            throw new DataAccessException(400, "Error, bad request");
-//        } else {
-//            if (authDAO.deleteAuth(logoutRequest.authToken())) {
-//                return new LogoutResult();
-//            } else {
-//                throw new DataAccessException(400, "Error, bad request");
-//            }
-//        }
-//    }
-
     public LogoutResult logout(String authToken) throws DataAccessException {
         if (authToken == null) {
             throw new DataAccessException(500, "Error: no authToken found");

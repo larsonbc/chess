@@ -25,7 +25,7 @@ public class ChessPiece implements Cloneable{
     public ChessPiece clone() {
         try {
             ChessPiece clone = (ChessPiece) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            //copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
