@@ -16,7 +16,6 @@ public class MemoryGameDAO implements GameDAO{
         if (gameName == null) {
             throw new DataAccessException(400, "Error: bad request");
         } else {
-            System.out.println("GameDAO - createGame(): successful else");
             GameData newGame = new GameData(nextID++, null, null, gameName, new ChessGame());
             games.add(newGame);
             return newGame;
@@ -40,7 +39,6 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public boolean updateGame(String playerColor, int gameID, String username) throws DataAccessException {
-        System.out.println("GameDAO - updateGame()");
         GameData oldGame = getGame(gameID);
         if (oldGame == null) {
             throw new DataAccessException(400, "Error: bad request");
@@ -50,6 +48,9 @@ public class MemoryGameDAO implements GameDAO{
             if (games.get(i).gameID() == oldGame.gameID()) {
                 index = i;
             }
+        }
+        if ((oldGame.whiteUsername() != null && Objects.equals(playerColor, "WHITE")) || (oldGame.blackUsername() != null && Objects.equals(playerColor, "BLACK"))) {
+            throw new DataAccessException(403, "Error: already taken");
         }
         GameData updatedGame;
         if (Objects.equals(playerColor, "WHITE")) {
@@ -72,7 +73,15 @@ public class MemoryGameDAO implements GameDAO{
             throw new DataAccessException(400, "Error: bad request");
         }
         games.set(index, updatedGame);
-        System.out.println("GameDAO - updateGame(): bottom after successful update");
         return true;
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        try {
+            games.clear();
+        } catch (Exception e) {
+            throw new DataAccessException(500, "Error: Unable to clear");
+        }
     }
 }

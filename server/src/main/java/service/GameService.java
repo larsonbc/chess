@@ -14,7 +14,6 @@ import result.JoinGameResult;
 import result.ListGamesResult;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class GameService {
 
@@ -27,7 +26,6 @@ public class GameService {
     }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest createRequest) throws DataAccessException {
-        System.out.println("GameService - createGame()");
         if (authToken == null) {
             throw new DataAccessException(400, "Error: bad request");
         }
@@ -47,14 +45,13 @@ public class GameService {
             throw new DataAccessException(400, "Error: bad request");
         }
         AuthData auth = authDAO.getAuth(authToken);
-        if (auth.authToken() == null) {
+        if (auth == null || auth.authToken() == null) {
             throw new DataAccessException(401, "Error: unauthorized");
         }
         if (gameDAO.getGame(joinRequest.gameID()) == null) {
             throw new DataAccessException(400, "Error: bad request");
         }
         if (gameDAO.updateGame(joinRequest.playerColor(), joinRequest.gameID(), auth.username())) {
-            System.out.println("GameService - joinGame(): successful join game");
             return new JoinGameResult();
         } else {
             throw new DataAccessException(400, "Error: bad request");
@@ -66,7 +63,7 @@ public class GameService {
             throw new DataAccessException(400, "Error: bad request");
         }
         AuthData auth = authDAO.getAuth(authToken);
-        if (auth.authToken() == null) {
+        if (auth == null || auth.authToken() == null) {
             throw new DataAccessException(401, "Error: unauthorized");
         }
         ArrayList<GameData> fullGames = (gameDAO.listGames());
@@ -75,11 +72,15 @@ public class GameService {
             GameSummary newSummary = new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
             summaries.add(newSummary);
         }
-        System.out.println("GameService - listGames(): Number of games: " + summaries.size());
         return new ListGamesResult(summaries);
 //        ArrayList<GameSummary> summaries = (ArrayList<GameSummary>) fullGames.stream().map(game -> new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()))
 //                .toList();
 //        return new ListGamesResult(summaries);
         //return new ListGamesResult(gameDAO.listGames());
+    }
+
+    public void clear() throws DataAccessException {
+        gameDAO.clear();
+        authDAO.clear();
     }
 }

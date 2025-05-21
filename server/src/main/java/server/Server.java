@@ -16,7 +16,7 @@ public class Server {
     RegisterHandler registerHandler = new RegisterHandler(userService);
     LoginHandler loginHandler = new LoginHandler(userService);
     LogoutHandler logoutHandler = new LogoutHandler(userService);
-    ClearDBHandler clearDBHandler = new ClearDBHandler(userService);
+    ClearDBHandler clearDBHandler = new ClearDBHandler(userService, gameService);
     CreateGameHandler createGameHandler = new CreateGameHandler(gameService);
     JoinGameHandler joinGameHandler = new JoinGameHandler(gameService);
     ListGamesHandler listGamesHandler = new ListGamesHandler(gameService);

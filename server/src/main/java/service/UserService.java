@@ -82,6 +82,7 @@ public class UserService {
 
     public void clear() throws DataAccessException {
         userDAO.clearUsers();
+        authDAO.clear();
     }
 
 }
