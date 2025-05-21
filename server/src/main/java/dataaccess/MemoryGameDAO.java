@@ -17,7 +17,7 @@ public class MemoryGameDAO implements GameDAO{
             throw new DataAccessException(400, "Error: bad request");
         } else {
             System.out.println("GameDAO - createGame(): successful else");
-            GameData newGame = new GameData(nextID++, "whiteUsername", "blackUsername", gameName, new ChessGame());
+            GameData newGame = new GameData(nextID++, null, null, gameName, new ChessGame());
             games.add(newGame);
             return newGame;
         }
@@ -60,7 +60,7 @@ public class MemoryGameDAO implements GameDAO{
                     oldGame.gameName(),
                     oldGame.game()
             );
-        } else {
+        } else if (Objects.equals(playerColor, "BLACK")){
             updatedGame = new GameData(
                     oldGame.gameID(),
                     oldGame.whiteUsername(),
@@ -68,6 +68,8 @@ public class MemoryGameDAO implements GameDAO{
                     oldGame.gameName(),
                     oldGame.game()
             );
+        } else {
+            throw new DataAccessException(400, "Error: bad request");
         }
         games.set(index, updatedGame);
         System.out.println("GameDAO - updateGame(): bottom after successful update");
