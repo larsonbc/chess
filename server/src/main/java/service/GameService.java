@@ -27,6 +27,7 @@ public class GameService {
     }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest createRequest) throws DataAccessException {
+        System.out.println("GameService - createGame()");
         if (authToken == null) {
             throw new DataAccessException(400, "Error: bad request");
         }
@@ -53,6 +54,7 @@ public class GameService {
             throw new DataAccessException(400, "Error: bad request");
         }
         if (gameDAO.updateGame(joinRequest.playerColor(), joinRequest.gameID(), auth.username())) {
+            System.out.println("GameService - joinGame(): successful join game");
             return new JoinGameResult();
         } else {
             throw new DataAccessException(400, "Error: bad request");
@@ -73,6 +75,7 @@ public class GameService {
             GameSummary newSummary = new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
             summaries.add(newSummary);
         }
+        System.out.println("GameService - listGames(): Number of games: " + summaries.size());
         return new ListGamesResult(summaries);
 //        ArrayList<GameSummary> summaries = (ArrayList<GameSummary>) fullGames.stream().map(game -> new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()))
 //                .toList();
