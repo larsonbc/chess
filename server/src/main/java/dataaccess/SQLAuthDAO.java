@@ -63,14 +63,6 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public boolean deleteAuth(String authToken) throws DataAccessException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            var statement = "DELETE FROM auth WHERE authToken = ?";
-//            int rowsAffected = executeUpdate(statement, authToken);
-//            System.out.println(rowsAffected);
-//            return rowsAffected > 0;
-//        } catch (SQLException e) {
-//            return false;
-//        }
         var statement = "DELETE FROM auth WHERE authToken=?";
         executeUpdate(statement, authToken);
         return true;
