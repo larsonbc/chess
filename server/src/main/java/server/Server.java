@@ -8,25 +8,39 @@ import spark.*;
 
 public class Server {
 
-//    UserDAO userDAO = new MemoryUserDAO();
-//    AuthDAO authDAO = new MemoryAuthDAO();
-//    GameDAO gameDAO = new MemoryGameDAO();
-    UserDAO userDAO = new SQLUserDAO();
-    AuthDAO authDAO = new SQLAuthDAO();
-    GameDAO gameDAO = new SQLGameDAO();
-    UserService userService = new UserService(userDAO, authDAO);
-    GameService gameService = new GameService(authDAO, gameDAO);
-//    UserService userService;
-//    GameService gameService;
-    RegisterHandler registerHandler = new RegisterHandler(userService);
-    LoginHandler loginHandler = new LoginHandler(userService);
-    LogoutHandler logoutHandler = new LogoutHandler(userService);
-    ClearDBHandler clearDBHandler = new ClearDBHandler(userService, gameService);
-    CreateGameHandler createGameHandler = new CreateGameHandler(gameService);
-    JoinGameHandler joinGameHandler = new JoinGameHandler(gameService);
-    ListGamesHandler listGamesHandler = new ListGamesHandler(gameService);
+    UserDAO userDAO;
+    AuthDAO authDAO;
+    GameDAO gameDAO;
+    UserService userService;
+    GameService gameService;
+    RegisterHandler registerHandler;
+    LoginHandler loginHandler;
+    LogoutHandler logoutHandler;
+    ClearDBHandler clearDBHandler;
+    CreateGameHandler createGameHandler;
+    JoinGameHandler joinGameHandler;
+    ListGamesHandler listGamesHandler;
 
-    public Server() throws DataAccessException {
+    public Server() {
+        try {
+            userDAO = new SQLUserDAO();
+            authDAO = new SQLAuthDAO();
+            gameDAO  = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            System.out.println("Unable to create SQL DAOs, using memory DAOs");
+            userDAO = new MemoryUserDAO();
+            authDAO = new MemoryAuthDAO();
+            gameDAO = new MemoryGameDAO();
+        }
+        userService = new UserService(userDAO, authDAO);
+        gameService = new GameService(authDAO, gameDAO);
+        registerHandler = new RegisterHandler(userService);
+        loginHandler = new LoginHandler(userService);
+        logoutHandler = new LogoutHandler(userService);
+        clearDBHandler = new ClearDBHandler(userService, gameService);
+        createGameHandler = new CreateGameHandler(gameService);
+        joinGameHandler = new JoinGameHandler(gameService);
+        listGamesHandler = new ListGamesHandler(gameService);
     }
 
     public int run(int desiredPort) {
