@@ -2,12 +2,12 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -65,7 +65,35 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public boolean updateGame(String playerColor, int gameID, String username) throws DataAccessException {
-        return false;
+        System.out.println(1);
+        GameData oldGame = getGame(gameID);
+        if (oldGame == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        if ((oldGame.whiteUsername() != null && Objects.equals(playerColor, "WHITE")) ||
+                (oldGame.blackUsername() != null && Objects.equals(playerColor, "BLACK"))) {
+            throw new DataAccessException(403, "Error: already taken");
+        }
+        System.out.println(2);
+        var statement = "";
+        if (Objects.equals(playerColor, "WHITE")) {
+            statement = "UPDATE game SET white_username = ? WHERE id = ?";
+        } else if (Objects.equals(playerColor, "BLACK")){
+            statement = "UPDATE game SET black_username = ? WHERE id = ?";
+        } else {
+            System.out.println(3);
+            throw new DataAccessException(400, "Error: bad request");
+        }
+
+        try (var conn = DatabaseManager.getConnection()) {
+            var ps = conn.prepareStatement(statement);
+            ps.setString(1, username);
+            ps.setInt(2, gameID);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
