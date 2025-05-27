@@ -8,11 +8,16 @@ import spark.*;
 
 public class Server {
 
-    UserDAO userDAO = new MemoryUserDAO();
-    AuthDAO authDAO = new MemoryAuthDAO();
-    GameDAO gameDAO = new MemoryGameDAO();
+//    UserDAO userDAO = new MemoryUserDAO();
+//    AuthDAO authDAO = new MemoryAuthDAO();
+//    GameDAO gameDAO = new MemoryGameDAO();
+    UserDAO userDAO = new SQLUserDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
+    GameDAO gameDAO = new SQLGameDAO();
     UserService userService = new UserService(userDAO, authDAO);
     GameService gameService = new GameService(authDAO, gameDAO);
+//    UserService userService;
+//    GameService gameService;
     RegisterHandler registerHandler = new RegisterHandler(userService);
     LoginHandler loginHandler = new LoginHandler(userService);
     LogoutHandler logoutHandler = new LogoutHandler(userService);
@@ -21,7 +26,17 @@ public class Server {
     JoinGameHandler joinGameHandler = new JoinGameHandler(gameService);
     ListGamesHandler listGamesHandler = new ListGamesHandler(gameService);
 
+    public Server() throws DataAccessException {
+    }
+
     public int run(int desiredPort) {
+
+//        try {
+//            DatabaseManager.createDatabase();
+//        } catch (DataAccessException e) {
+//            throw new RuntimeException(e);
+//        }
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
