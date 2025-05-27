@@ -27,7 +27,7 @@ public class Server {
             authDAO = new SQLAuthDAO();
             gameDAO  = new SQLGameDAO();
         } catch (DataAccessException e) {
-            System.out.println("Unable to create SQL DAOs, using memory DAOs");
+            System.out.println("Unable to create SQL DAO(s), using memory DAO(s)");
             userDAO = new MemoryUserDAO();
             authDAO = new MemoryAuthDAO();
             gameDAO = new MemoryGameDAO();
