@@ -65,7 +65,6 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public boolean updateGame(String playerColor, int gameID, String username) throws DataAccessException {
-        System.out.println(1);
         GameData oldGame = getGame(gameID);
         if (oldGame == null) {
             throw new DataAccessException(400, "Error: bad request");
@@ -74,14 +73,12 @@ public class SQLGameDAO implements GameDAO{
                 (oldGame.blackUsername() != null && Objects.equals(playerColor, "BLACK"))) {
             throw new DataAccessException(403, "Error: already taken");
         }
-        System.out.println(2);
         var statement = "";
         if (Objects.equals(playerColor, "WHITE")) {
             statement = "UPDATE game SET white_username = ? WHERE id = ?";
         } else if (Objects.equals(playerColor, "BLACK")){
             statement = "UPDATE game SET black_username = ? WHERE id = ?";
         } else {
-            System.out.println(3);
             throw new DataAccessException(400, "Error: bad request");
         }
 
@@ -117,9 +114,13 @@ public class SQLGameDAO implements GameDAO{
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, NULL);
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
                 }
                 ps.executeUpdate();
 
