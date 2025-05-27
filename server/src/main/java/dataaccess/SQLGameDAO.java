@@ -47,7 +47,20 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGames() {
-        return null;
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM game";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(readGame(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return result;
     }
 
     @Override
@@ -63,17 +76,12 @@ public class SQLGameDAO implements GameDAO{
 
     private GameData readGame(ResultSet rs) throws SQLException {
         var id = rs.getInt("id");
-        System.out.println(id);
         var whiteUsername = rs.getString("white_username");
-        System.out.println(whiteUsername);
         var blackUsername = rs.getString("black_username");
-        System.out.println(blackUsername);
         var gameName = rs.getString("game_name");
-        System.out.println(gameName);
         var json = rs.getString("game");
-        var game = new Gson().fromJson(json, GameData.class);
-        System.out.println(game);
-        return game;
+        var gameState = new Gson().fromJson(json, ChessGame.class);
+        return new GameData(id, whiteUsername, blackUsername, gameName, gameState);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
