@@ -7,7 +7,7 @@ import request.RegisterRequest;
 import server.Server;
 import server.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -33,6 +33,17 @@ public class ServerFacadeTests {
     public void registerPositive() throws ResponseException {
         var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    public void registerNegative() throws ResponseException {
+        assertDoesNotThrow(() -> {
+            facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        });
+
+        assertThrows(ResponseException.class, () -> {
+            facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        });
     }
 
 }
