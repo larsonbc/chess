@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import request.RegisterRequest;
+import result.RegisterResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,11 @@ public class ServerFacade {
     private final String serverUrl;
 
     public ServerFacade(String url) {serverUrl = url;}
+
+    public RegisterResult register(RegisterRequest registerRequest) throws ResponseException {
+        var path = "/user";
+        return this.makeRequest("POST", path, registerRequest, RegisterResult.class);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -34,7 +41,6 @@ public class ServerFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
@@ -71,7 +77,6 @@ public class ServerFacade {
         }
         return response;
     }
-
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
