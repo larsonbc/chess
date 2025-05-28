@@ -3,6 +3,7 @@ package client;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import org.junit.jupiter.api.*;
+import request.LoginRequest;
 import request.RegisterRequest;
 import server.Server;
 import server.ServerFacade;
@@ -36,14 +37,25 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerNegative() throws ResponseException {
+    public void registerNegative() {
         assertDoesNotThrow(() -> {
             facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         });
+        assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest("player1", "password", "p1@email.com")));
+    }
 
-        assertThrows(ResponseException.class, () -> {
+    @Test
+    public void loginPositive() throws ResponseException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    public void loginNegative() {
+        assertDoesNotThrow(() -> {
             facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         });
+        assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest("player1", "password", "p1@email.com")));
     }
 
 }
