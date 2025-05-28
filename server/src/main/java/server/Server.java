@@ -77,4 +77,10 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+    public void clear() throws DataAccessException {
+        userDAO.clearUsers();
+        authDAO.clear();
+        gameDAO.clear();
+    }
 }

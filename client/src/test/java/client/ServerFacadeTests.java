@@ -1,5 +1,6 @@
 package client;
 
+import dataaccess.DataAccessException;
 import exception.ResponseException;
 import org.junit.jupiter.api.*;
 import request.RegisterRequest;
@@ -15,11 +16,12 @@ public class ServerFacadeTests {
     static ServerFacade facade;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws DataAccessException {
         server = new Server();
+        server.clear();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(Integer.toString(port));
+        facade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll
@@ -27,14 +29,8 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-
     @Test
-    public void sampleTest() {
-        assertTrue(true);
-    }
-
-    @Test
-    public void register() throws ResponseException {
+    public void registerPositive() throws ResponseException {
         var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
     }
