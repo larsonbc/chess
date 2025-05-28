@@ -20,11 +20,20 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-        var statement = "INSERT INTO game (game_name, game) VALUES (?, ?)";
-        ChessGame newGame = new ChessGame();
-        var json = new Gson().toJson(newGame);
-        var id = executeUpdate(statement, gameName, json);
-        return new GameData(id, null, null, gameName, newGame);
+//        var statement = "INSERT INTO game (game_name, game) VALUES (?, ?)";
+//        ChessGame newGame = new ChessGame();
+//        var json = new Gson().toJson(newGame);
+//        var id = executeUpdate(statement, gameName, json);
+//        return new GameData(id, null, null, gameName, newGame);
+        try {
+            var statement = "INSERT INTO game (game_name, game) VALUES (?, ?)";
+            ChessGame newGame = new ChessGame();
+            var json = new Gson().toJson(newGame);
+            var id = executeUpdate(statement, gameName, json);
+            return new GameData(id, null, null, gameName, newGame);
+        } catch (Exception e) {
+            throw new DataAccessException(500, "Internal Server Error: Could not create game.");
+        }
     }
 
     @Override
@@ -114,12 +123,12 @@ public class SQLGameDAO implements GameDAO{
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    } else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    } else if (param == null) {
+                        ps.setNull(i + 1, NULL);
                     }
                 }
                 ps.executeUpdate();

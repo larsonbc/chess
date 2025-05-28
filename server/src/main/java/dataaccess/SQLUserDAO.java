@@ -26,7 +26,7 @@ public class SQLUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM user WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -41,7 +41,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException(500, "Internal Server Error: Could not access user database.");
         }
         return null;
     }
@@ -57,9 +57,13 @@ public class SQLUserDAO implements UserDAO{
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, NULL);
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
                 }
                 ps.executeUpdate();
 

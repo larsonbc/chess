@@ -26,17 +26,33 @@ public class GameService {
     }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest createRequest) throws DataAccessException {
-        if (authToken == null) {
+//        if (authToken == null) {
+//            throw new DataAccessException(400, "Error: bad request");
+//        }
+//        if (authDAO.getAuthToken(authToken) == null) {
+//            throw new DataAccessException(401, "Error: unauthorized");
+//        }
+//        if (createRequest.gameName() == null) {
+//            throw new DataAccessException(400, "Error: bad request");
+//        } else {
+//            GameData newGame = gameDAO.createGame(createRequest.gameName());
+//            return new CreateGameResult(newGame.gameID());
+//        }
+        if (authToken == null || createRequest.gameName() == null) {
             throw new DataAccessException(400, "Error: bad request");
         }
-        if (authDAO.getAuthToken(authToken) == null) {
-            throw new DataAccessException(401, "Error: unauthorized");
-        }
-        if (createRequest.gameName() == null) {
-            throw new DataAccessException(400, "Error: bad request");
-        } else {
+
+        try {
+            if (authDAO.getAuthToken(authToken) == null) {
+                throw new DataAccessException(401, "Error: unauthorized");
+            }
+
             GameData newGame = gameDAO.createGame(createRequest.gameName());
             return new CreateGameResult(newGame.gameID());
+        } catch (DataAccessException e) {
+            throw e; // Preserve known, expected exceptions (e.g. 400 or 401)
+        } catch (Exception e) {
+            throw new DataAccessException(500, "Internal Server Error: Could not create game");
         }
     }
 
