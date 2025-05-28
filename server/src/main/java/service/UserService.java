@@ -35,35 +35,37 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
-//        if (loginRequest.username() == null || loginRequest.password() == null) {
-//            throw new DataAccessException(400, "Error, bad request");
-//        }
-//        UserData user = userDAO.getUser(loginRequest.username());
-//        if (user != null) {
-//            if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
-//                throw new DataAccessException(401, "Error: unauthorized");
-//            } else {
-//                AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
-//                return new LoginResult(newAuth.username(), newAuth.authToken());
-//            }
-//        } else {
-//            throw new DataAccessException(401, "Error: unauthorized");
-//        }
-        try {
-            UserData user = userDAO.getUser(loginRequest.username());
-            if (user != null) {
-                if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
-                    throw new DataAccessException(401, "Error: unauthorized");
-                } else {
-                    AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
-                    return new LoginResult(newAuth.username(), newAuth.authToken());
-                }
-            } else {
-                throw new DataAccessException(401, "Error: unauthorized");
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(500, "Internal Server Error: Database failure.");
+        if (loginRequest.username() == null || loginRequest.password() == null) {
+            throw new DataAccessException(400, "Error, bad request");
         }
+        UserData user = userDAO.getUser(loginRequest.username());
+        if (user != null) {
+            if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
+                throw new DataAccessException(401, "Error: unauthorized");
+            } else {
+                AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
+                return new LoginResult(newAuth.username(), newAuth.authToken());
+            }
+        } else {
+            throw new DataAccessException(401, "Error: unauthorized");
+        }
+
+
+//        try {
+//            UserData user = userDAO.getUser(loginRequest.username());
+//            if (user != null) {
+//                if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
+//                    throw new DataAccessException(401, "Error: unauthorized");
+//                } else {
+//                    AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
+//                    return new LoginResult(newAuth.username(), newAuth.authToken());
+//                }
+//            } else {
+//                throw new DataAccessException(401, "Error: unauthorized");
+//            }
+//        } catch (Exception e) {
+//            throw new DataAccessException(500, "Internal Server Error: Database failure.");
+//        }
     }
 
     public LogoutResult logout(String authToken) throws DataAccessException {

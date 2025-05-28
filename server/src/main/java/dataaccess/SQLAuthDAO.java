@@ -24,7 +24,7 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     @Override
-    public String getAuthToken(String authToken) {
+    public String getAuthToken(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -36,13 +36,13 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException(500, "Error: Unable to connect to SQL Auth DAO");
         }
         return null;
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -56,7 +56,7 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException(500, "Error: Unable to connect to SQL Auth DAO");
         }
         return null;
     }
