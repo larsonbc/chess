@@ -3,7 +3,9 @@ package client;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import org.junit.jupiter.api.*;
+import request.CreateGameRequest;
 import request.LoginRequest;
+import request.LogoutRequest;
 import request.RegisterRequest;
 import server.Server;
 import server.ServerFacade;
@@ -56,6 +58,29 @@ public class ServerFacadeTests {
             facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         });
         assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest("player1", "password", "p1@email.com")));
+    }
+
+    @Test
+    public void logoutPositive() throws ResponseException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        assertTrue(authData.authToken().length() > 10);
+        String authToken = authData.authToken();
+        System.out.println(authToken);
+        facade.logout(new LogoutRequest(authToken));
+
+//        assertThrows(ResponseException.class, () -> {
+//            facade.createGame(new CreateGameRequest("ShouldNotWork"));
+//        });
+    }
+
+    @Test public void logoutNegative() {
+
+    }
+
+    @Test
+    public void createGamePositive() throws ResponseException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+
     }
 
 }
