@@ -80,10 +80,13 @@ public class DAOUtils {
             switch (type) {
                 case "user":
                     statements = createUserStatements;
+                    break;
                 case "auth":
                     statements = createAuthStatements;
+                    break;
                 case "game":
                     statements = createGameStatements;
+                    break;
             }
             for (var statement : statements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
