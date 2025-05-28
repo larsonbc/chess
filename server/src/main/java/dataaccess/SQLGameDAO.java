@@ -20,11 +20,6 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-//        var statement = "INSERT INTO game (game_name, game) VALUES (?, ?)";
-//        ChessGame newGame = new ChessGame();
-//        var json = new Gson().toJson(newGame);
-//        var id = executeUpdate(statement, gameName, json);
-//        return new GameData(id, null, null, gameName, newGame);
         try {
             var statement = "INSERT INTO game (game_name, game) VALUES (?, ?)";
             ChessGame newGame = new ChessGame();
