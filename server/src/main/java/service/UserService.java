@@ -49,38 +49,9 @@ public class UserService {
         } else {
             throw new DataAccessException(401, "Error: unauthorized");
         }
-
-
-//        try {
-//            UserData user = userDAO.getUser(loginRequest.username());
-//            if (user != null) {
-//                if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
-//                    throw new DataAccessException(401, "Error: unauthorized");
-//                } else {
-//                    AuthData newAuth = authDAO.createAuthToken(loginRequest.username());
-//                    return new LoginResult(newAuth.username(), newAuth.authToken());
-//                }
-//            } else {
-//                throw new DataAccessException(401, "Error: unauthorized");
-//            }
-//        } catch (Exception e) {
-//            throw new DataAccessException(500, "Internal Server Error: Database failure.");
-//        }
     }
 
     public LogoutResult logout(String authToken) throws DataAccessException {
-//        if (authToken == null) {
-//            throw new DataAccessException(500, "Error: no authToken found");
-//        }
-//        if (authDAO.getAuthToken(authToken) == null) {
-//            throw new DataAccessException(401, "Error: unauthorized");
-//        } else {
-//            if (authDAO.deleteAuth(authToken)) {
-//                return new LogoutResult();
-//            } else {
-//                throw new DataAccessException(500, "Error: unable to logout");
-//            }
-//        }
         if (authToken == null) {
             throw new DataAccessException(500, "Error: no authToken found");
         }
