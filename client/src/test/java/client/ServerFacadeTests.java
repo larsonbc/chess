@@ -7,6 +7,8 @@ import request.CreateGameRequest;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
+import result.CreateGameResult;
+import result.RegisterResult;
 import server.Server;
 import server.ServerFacade;
 
@@ -84,8 +86,17 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGamePositive() {
+    public void createGamePositive() throws ResponseException {
+        RegisterResult newUser = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        CreateGameResult newGame = facade.createGame(new CreateGameRequest("testGame"), newUser.authToken());
+        int expectedID = 1;
+        int actualID = newGame.gameID();
+        assertEquals(expectedID, actualID);
+    }
 
+    @Test
+    public void createGameNegative() {
+        assertThrows(ResponseException.class, () -> facade.createGame(new CreateGameRequest("ShouldNotWork"), "badToken"));
     }
 
 }
