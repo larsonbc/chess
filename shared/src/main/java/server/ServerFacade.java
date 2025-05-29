@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.GameSummary;
 import request.*;
 import result.*;
 

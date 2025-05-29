@@ -5,7 +5,6 @@ import exception.ResponseException;
 import org.junit.jupiter.api.*;
 import request.*;
 import result.CreateGameResult;
-import result.ListGamesResult;
 import result.RegisterResult;
 import server.Server;
 import server.ServerFacade;
@@ -122,6 +121,11 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> {
             facade.listGames(newUser.authToken());
         });
+    }
+
+    @Test
+    public void listGamesNegative() {
+        assertThrows(ResponseException.class, () -> facade.listGames("badToken"));
     }
 
 }
