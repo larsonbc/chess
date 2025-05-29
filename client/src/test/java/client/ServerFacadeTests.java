@@ -128,4 +128,15 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> facade.listGames("badToken"));
     }
 
+    @Test
+    public void clearPositive() throws ResponseException {
+        RegisterResult newUser = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        facade.createGame(new CreateGameRequest("testGame"), newUser.authToken());
+        assertDoesNotThrow(() -> facade.clear(newUser.authToken()));
+    }
+
+    @Test
+    public void clearNegative() {
+    }
+
 }

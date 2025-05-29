@@ -49,6 +49,11 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListGamesResult.class, authToken);
     }
 
+    public void clear(String authToken) throws ResponseException {
+        var path = "/db";
+        this.makeRequest("DELETE", path, null, null, authToken);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
@@ -133,7 +138,7 @@ public class ServerFacade {
             }
         }
         // If listGames
-        if (request == null) {
+        if (request == null && authToken != null) {
             http.setRequestProperty("Authorization", authToken);
         }
     }
