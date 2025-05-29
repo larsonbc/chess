@@ -5,7 +5,6 @@ import exception.ResponseException;
 import org.junit.jupiter.api.*;
 import request.*;
 import result.CreateGameResult;
-import result.JoinGameResult;
 import result.RegisterResult;
 import server.Server;
 import server.ServerFacade;
@@ -104,6 +103,14 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> {
             facade.joinGame(new JoinGameRequest("WHITE", 1), newUser.authToken());
         });
+    }
+
+    @Test
+    public void joinGameNegative() throws ResponseException {
+        RegisterResult newUser = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        facade.createGame(new CreateGameRequest("testGame"), newUser.authToken());
+        facade.joinGame(new JoinGameRequest("WHITE", 1), newUser.authToken());
+        assertThrows(ResponseException.class, () -> facade.joinGame(new JoinGameRequest("WHITE", 1), newUser.authToken()));
     }
 
 }
