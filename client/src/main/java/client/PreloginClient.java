@@ -20,14 +20,16 @@ public class PreloginClient {
 
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
-            return "You are now signed in as " + params[0];
+            System.out.println("You are now signed in as " + params[0]);
+            return "login_success";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            return "Successfully registered. You are now signed in as " + params[0];
+            System.out.println("Successfully registered. You are now signed in as " + params[0]);
+            return "login_success";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }

@@ -25,15 +25,15 @@ public class PostloginClient {
     }
 
     public String createGame(String... params) throws ResponseException {
-        if (params.length != 1) {
+        if (params.length == 1) {
             return "Game created. Game name: " + params[0];
         } else {
-            return "Expected: <GAME NAME>";
+            throw new ResponseException(400, "Expected: <GAME NAME>");
         }
     }
 
     public String joinGame(String... params) throws ResponseException {
-        if (params.length != 2) {
+        if (params.length == 2) {
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             return "Expected: <GAME ID> <COLOR>";
@@ -41,14 +41,14 @@ public class PostloginClient {
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length != 1) {
+        if (params.length == 1) {
             return "Watching game with ID: " + params[0];
         } else {
             return "Expected: <GAME ID>";
         }
     }
 
-    public String logout() throws ResponseException {
+    public String logout() {
         return "You are now logged out";
     }
 

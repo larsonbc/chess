@@ -24,7 +24,20 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = preloginClient.eval(line);
+                switch (state) {
+                    case SIGNEDOUT -> {
+                        result = preloginClient.eval(line);
+                        if (result.equals("login_success")) {
+                            state = State.SIGNEDIN;
+                            System.out.println("\u001b[34mYou are now logged in.\n");
+                            System.out.println(postloginClient.help());
+                            continue;
+                        }
+                    }
+                    case SIGNEDIN -> {
+                        result = postloginClient.eval(line);
+                    }
+                }
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {
                 var msg = e.toString();
