@@ -3,11 +3,9 @@ package client;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import org.junit.jupiter.api.*;
-import request.CreateGameRequest;
-import request.LoginRequest;
-import request.LogoutRequest;
-import request.RegisterRequest;
+import request.*;
 import result.CreateGameResult;
+import result.JoinGameResult;
 import result.RegisterResult;
 import server.Server;
 import server.ServerFacade;
@@ -97,6 +95,15 @@ public class ServerFacadeTests {
     @Test
     public void createGameNegative() {
         assertThrows(ResponseException.class, () -> facade.createGame(new CreateGameRequest("ShouldNotWork"), "badToken"));
+    }
+
+    @Test
+    public void joinGamePositive() throws ResponseException {
+        RegisterResult newUser = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        facade.createGame(new CreateGameRequest("testGame"), newUser.authToken());
+        assertDoesNotThrow(() -> {
+            facade.joinGame(new JoinGameRequest("WHITE", 1), newUser.authToken());
+        });
     }
 
 }
