@@ -55,6 +55,9 @@ public class ServerFacadeTests {
     public void loginPositive() throws ResponseException {
         var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
+        assertDoesNotThrow(() -> {
+            facade.login(new LoginRequest("player1", "password"));
+        });
     }
 
     @Test
@@ -62,7 +65,7 @@ public class ServerFacadeTests {
         assertDoesNotThrow(() -> {
             facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         });
-        assertThrows(ResponseException.class, () -> facade.register(new RegisterRequest("player1", "password", "p1@email.com")));
+        assertThrows(ResponseException.class, () -> facade.login(new LoginRequest("player1", "incorrect")));
     }
 
     @Test
@@ -72,18 +75,16 @@ public class ServerFacadeTests {
         String authToken = authData.authToken();
         facade.logout(new LogoutRequest(authToken));
 
-        assertThrows(ResponseException.class, () -> {
-            facade.createGame(new CreateGameRequest("ShouldNotWork"), authToken);
-        });
+        assertThrows(ResponseException.class, () -> facade.createGame(new CreateGameRequest("ShouldNotWork"), authToken));
     }
 
     @Test public void logoutNegative() {
-
+        String badToken = "123abc";
+        assertThrows(ResponseException.class, () -> facade.logout(new LogoutRequest(badToken)));
     }
 
     @Test
-    public void createGamePositive() throws ResponseException {
-        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+    public void createGamePositive() {
 
     }
 
