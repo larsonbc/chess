@@ -85,11 +85,9 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
-        System.out.println("Response Code: " + status);
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    System.out.println("Not Successful");
                     throw ResponseException.fromJson(respErr);
                 }
             }
@@ -125,7 +123,6 @@ public class ServerFacade {
             http.setRequestProperty("Authorization", auth);
         }
         if (request instanceof ListGamesRequest(String auth)) {
-            System.out.println("addHeaders: " + auth);
             http.setRequestProperty("Authorization", auth);
         }
         // If request is createGame or joinGame

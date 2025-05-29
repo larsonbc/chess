@@ -6,6 +6,7 @@ public class Repl {
 
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
+    private State state = State.SIGNEDOUT;
 
     public Repl(String serverUrl) {
         preloginClient = new PreloginClient();
@@ -14,6 +15,7 @@ public class Repl {
 
     public void run() {
         System.out.println("♕ Welcome to Chess. Sign in to start. ♕");
+        System.out.println(preloginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";

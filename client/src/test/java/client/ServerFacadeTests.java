@@ -117,7 +117,6 @@ public class ServerFacadeTests {
     public void listGamesPositive() throws ResponseException {
         RegisterResult newUser = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         facade.createGame(new CreateGameRequest("testGame"), newUser.authToken());
-        System.out.println("ServerFacadeTests: " + newUser.authToken());
         assertDoesNotThrow(() -> {
             facade.listGames(newUser.authToken());
         });
