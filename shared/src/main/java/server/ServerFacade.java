@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameSummary;
 import request.*;
 import result.*;
 
@@ -44,6 +45,11 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, joinGameRequest, JoinGameResult.class, authToken);
     }
 
+    public ListGamesResult listGames(String authToken) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("GET", path, null, ListGamesResult.class, authToken);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
@@ -75,9 +81,11 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
+        System.out.println("Response Code: " + status);
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
+                    System.out.println("Not Successful");
                     throw ResponseException.fromJson(respErr);
                 }
             }
@@ -113,6 +121,7 @@ public class ServerFacade {
             http.setRequestProperty("Authorization", auth);
         }
         if (request instanceof ListGamesRequest(String auth)) {
+            System.out.println("addHeaders: " + auth);
             http.setRequestProperty("Authorization", auth);
         }
         // If request is createGame or joinGame
@@ -123,6 +132,10 @@ public class ServerFacade {
             if (request instanceof JoinGameRequest joinGameRequest) {
                 http.setRequestProperty("Authorization", authToken);
             }
+        }
+        // If listGames
+        if (request == null) {
+            http.setRequestProperty("Authorization", authToken);
         }
     }
 
