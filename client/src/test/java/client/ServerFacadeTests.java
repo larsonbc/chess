@@ -27,6 +27,11 @@ public class ServerFacadeTests {
         facade = new ServerFacade("http://localhost:" + port);
     }
 
+    @BeforeEach
+    public void setup() throws DataAccessException {
+        server.clear();
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -65,12 +70,11 @@ public class ServerFacadeTests {
         var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
         String authToken = authData.authToken();
-        System.out.println(authToken);
         facade.logout(new LogoutRequest(authToken));
 
-//        assertThrows(ResponseException.class, () -> {
-//            facade.createGame(new CreateGameRequest("ShouldNotWork"));
-//        });
+        assertThrows(ResponseException.class, () -> {
+            facade.createGame(new CreateGameRequest("ShouldNotWork"), authToken);
+        });
     }
 
     @Test public void logoutNegative() {
