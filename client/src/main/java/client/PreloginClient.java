@@ -5,6 +5,11 @@ import exception.ResponseException;
 import java.util.Arrays;
 
 public class PreloginClient {
+    private StateHandler stateHandler;
+
+    public PreloginClient(StateHandler stateHandler) {
+        this.stateHandler = stateHandler;
+    }
 
     public String eval(String input) throws ResponseException {
         var tokens = input.toLowerCase().split(" ");
@@ -20,16 +25,16 @@ public class PreloginClient {
 
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
-            System.out.println("You are now signed in as " + params[0]);
-            return "login_success";
+            stateHandler.setState(State.SIGNEDIN);
+            return "You are now signed in as " + params[0];
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            System.out.println("Successfully registered. You are now signed in as " + params[0]);
-            return "login_success";
+            stateHandler.setState(State.SIGNEDIN);
+            return "Successfully registered. You are now signed in as " + params[0] + ".";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }

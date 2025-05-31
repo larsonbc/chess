@@ -6,6 +6,12 @@ import java.util.Arrays;
 
 public class PostloginClient {
 
+    private final StateHandler stateHandler;
+
+    public PostloginClient(StateHandler stateHandler) {
+        this.stateHandler = stateHandler;
+    }
+
     public String eval(String input) throws ResponseException {
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -49,6 +55,7 @@ public class PostloginClient {
     }
 
     public String logout() {
+        stateHandler.setState(State.SIGNEDOUT);
         return "You are now logged out";
     }
 

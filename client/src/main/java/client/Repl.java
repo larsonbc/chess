@@ -5,12 +5,11 @@ import java.util.Scanner;
 public class Repl {
 
     private final PreloginClient preloginClient;
-    private final PostloginClient postloginClient;
-    private State state = State.SIGNEDOUT;
+    private PostloginClient postloginClient;
+    private StateHandler stateHandler = new StateHandler();
 
     public Repl(String serverUrl) {
-        preloginClient = new PreloginClient();
-        postloginClient = new PostloginClient();
+        preloginClient = new PreloginClient(stateHandler);
     }
 
     public void run() {
@@ -24,18 +23,15 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                switch (state) {
-                    case SIGNEDOUT -> {
-                        result = preloginClient.eval(line);
-                        if (result.equals("login_success")) {
-                            state = State.SIGNEDIN;
-                            System.out.println("\u001b[34mYou are now logged in.\n");
-                            System.out.println(postloginClient.help());
-                            continue;
-                        }
+                if (stateHandler.getState() == State.SIGNEDOUT) {
+                    result = preloginClient.eval(line);
+                    if (stateHandler.getState() == State.SIGNEDIN) {
+                        postloginClient = new PostloginClient(stateHandler);
                     }
-                    case SIGNEDIN -> {
-                        result = postloginClient.eval(line);
+                } else {
+                    result = postloginClient.eval(line);
+                    if (stateHandler.getState() == State.SIGNEDOUT) {
+                        System.out.println(preloginClient.help());
                     }
                 }
                 System.out.print("\u001b[34m" + result);
@@ -48,6 +44,11 @@ public class Repl {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + "\u001b[0m" + ">>> " + "\u001b[32m");
+        if (stateHandler.getState() == State.SIGNEDOUT) {
+            System.out.print("\n" + "\u001b[0m" + "Chess Login >>> " + "\u001b[32m");
+        }
+        if (stateHandler.getState() == State.SIGNEDIN) {
+            System.out.print("\n" + "\u001b[0m" + "Chess >>> " + "\u001b[32m");
+        }
     }
 }
