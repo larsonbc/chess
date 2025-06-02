@@ -1,6 +1,9 @@
 package client;
 
+import com.google.gson.Gson;
 import exception.ResponseException;
+import request.CreateGameRequest;
+import request.JoinGameRequest;
 import request.LogoutRequest;
 import server.ServerFacade;
 
@@ -31,11 +34,27 @@ public class PostloginClient {
     }
 
     public String listGames() throws ResponseException {
-        return "List of Games will go here";
+        var games = facade.listGames(stateHandler.getAuthToken());
+        var result = new StringBuilder();
+
+        int index = 1;
+        for (var game : games.games()) {
+            result.append(String.format(
+                    "%d. Game Name: %s    White: %s    Black: %s%n",
+                    index++,
+                    game.gameName(),
+                    game.whiteUsername() != null ? game.whiteUsername() : "<empty>",
+                    game.blackUsername() != null ? game.blackUsername() : "<empty>"
+            ));
+        }
+        return result.toString();
     }
 
     public String createGame(String... params) throws ResponseException {
         if (params.length == 1) {
+            var gameName = params[0];
+            var request = new CreateGameRequest(gameName);
+            facade.createGame(request, stateHandler.getAuthToken());
             return "Game created. Game name: " + params[0];
         } else {
             throw new ResponseException(400, "Expected: <GAME NAME>");
@@ -44,6 +63,9 @@ public class PostloginClient {
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length == 2) {
+            var gameID = Integer.parseInt(params[0]);
+            var color = params[1];
+            var request = new JoinGameRequest(color, gameID);
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             return "Expected: <GAME ID> <COLOR>";
