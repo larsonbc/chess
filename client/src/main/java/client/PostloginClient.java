@@ -36,6 +36,9 @@ public class PostloginClient {
     }
 
     public String listGames() throws ResponseException {
+        if (numGames == 0) {
+            return "No current games";
+        }
         var games = facade.listGames(stateHandler.getAuthToken());
         var result = new StringBuilder();
 
@@ -94,13 +97,19 @@ public class PostloginClient {
 
     public String watchGame(String... params) throws ResponseException {
         if (params.length == 1) {
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Game ID must be a number");
+            }
             int gameID = Integer.parseInt(params[0]);
             if (gameID < 1 || gameID > numGames) {
                 throw new ResponseException(400, "Invalid game ID.");
             }
             ChessGame game = new ChessGame();
             System.out.print("\u001b[0m"); // Reset any previous color
-            ChessBoardPrinter.printBoard(game.getBoard(), false);
+            ChessBoardPrinter.printBoard(game.getBoard(), true);
             return "Watching game with ID: " + params[0];
         } else {
             return "Expected: <GAME ID>";
