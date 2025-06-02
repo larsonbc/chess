@@ -1,17 +1,19 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
 import request.LogoutRequest;
 import server.ServerFacade;
+import ui.ChessBoardPrinter;
 
 import java.util.Arrays;
 
 public class PostloginClient {
 
     private final StateHandler stateHandler;
-    private ServerFacade facade;
+    private final ServerFacade facade;
 
     public PostloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
@@ -70,14 +72,17 @@ public class PostloginClient {
             }
             var color = params[1].toUpperCase();
             var request = new JoinGameRequest(color, gameID);
-            var result = facade.joinGame(request, stateHandler.getAuthToken());
+            facade.joinGame(request, stateHandler.getAuthToken());
+            ChessGame game = new ChessGame();
+            System.out.print("\u001b[0m"); // Reset any previous color
+            ChessBoardPrinter.printBoard(game.getBoard(), true);
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             return "Expected: <GAME ID> <COLOR>";
         }
     }
 
-    public String watchGame(String... params) throws ResponseException {
+    public String watchGame(String... params) {
         if (params.length == 1) {
             return "Watching game with ID: " + params[0];
         } else {
