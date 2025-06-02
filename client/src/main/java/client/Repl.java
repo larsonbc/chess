@@ -33,9 +33,6 @@ public class Repl {
                     }
                 } else {
                     result = postloginClient.eval(line);
-//                    if (stateHandler.getState() == State.SIGNEDOUT) {
-//                        System.out.println(preloginClient.help());
-//                    }
                 }
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {
