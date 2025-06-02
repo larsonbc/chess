@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import exception.ResponseException;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
@@ -55,7 +54,7 @@ public class PostloginClient {
             var gameName = params[0];
             var request = new CreateGameRequest(gameName);
             facade.createGame(request, stateHandler.getAuthToken());
-            return "Game created. Game name: " + params[0];
+            return "Successfully created game " + params[0];
         } else {
             throw new ResponseException(400, "Expected: <GAME NAME>");
         }
@@ -63,9 +62,15 @@ public class PostloginClient {
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length == 2) {
-            var gameID = Integer.parseInt(params[0]);
-            var color = params[1];
+            int gameID;
+            try {
+                gameID = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Game ID must be a number");
+            }
+            var color = params[1].toUpperCase();
             var request = new JoinGameRequest(color, gameID);
+            var result = facade.joinGame(request, stateHandler.getAuthToken());
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             return "Expected: <GAME ID> <COLOR>";
