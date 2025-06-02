@@ -1,15 +1,18 @@
 package client;
 
 import exception.ResponseException;
+import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class PostloginClient {
 
     private final StateHandler stateHandler;
+    private ServerFacade facade;
 
-    public PostloginClient(StateHandler stateHandler) {
+    public PostloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
+        this.facade = facade;
     }
 
     public String eval(String input) throws ResponseException {

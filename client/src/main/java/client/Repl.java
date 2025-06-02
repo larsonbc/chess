@@ -1,15 +1,18 @@
 package client;
 
+import server.ServerFacade;
+
 import java.util.Scanner;
 
 public class Repl {
-
+    private final ServerFacade facade;
     private final PreloginClient preloginClient;
     private PostloginClient postloginClient;
-    private StateHandler stateHandler = new StateHandler();
+    private final StateHandler stateHandler = new StateHandler();
 
     public Repl(String serverUrl) {
-        preloginClient = new PreloginClient(stateHandler);
+        facade = new ServerFacade(serverUrl);
+        preloginClient = new PreloginClient(stateHandler, facade);
     }
 
     public void run() {
@@ -26,13 +29,13 @@ public class Repl {
                 if (stateHandler.getState() == State.SIGNEDOUT) {
                     result = preloginClient.eval(line);
                     if (stateHandler.getState() == State.SIGNEDIN) {
-                        postloginClient = new PostloginClient(stateHandler);
+                        postloginClient = new PostloginClient(stateHandler, facade);
                     }
                 } else {
                     result = postloginClient.eval(line);
-                    if (stateHandler.getState() == State.SIGNEDOUT) {
-                        System.out.println(preloginClient.help());
-                    }
+//                    if (stateHandler.getState() == State.SIGNEDOUT) {
+//                        System.out.println(preloginClient.help());
+//                    }
                 }
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {

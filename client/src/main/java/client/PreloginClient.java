@@ -1,14 +1,19 @@
 package client;
 
 import exception.ResponseException;
+import request.LoginRequest;
+import request.RegisterRequest;
+import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class PreloginClient {
     private StateHandler stateHandler;
+    private ServerFacade facade;
 
-    public PreloginClient(StateHandler stateHandler) {
+    public PreloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
+        this.facade = facade;
     }
 
     public String eval(String input) throws ResponseException {
@@ -24,15 +29,23 @@ public class PreloginClient {
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length == 2) {
+            var username = params[0];
+            var password = params[1];
+
+            var request = new LoginRequest(username, password);
+            var result = facade.login(request);
             stateHandler.setState(State.SIGNEDIN);
-            return "You are now signed in as " + params[0];
+            return "You are now signed in as " + username + ".";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 3) {
+        if (params.length == 3) {
+            var request = new RegisterRequest(params[0], params[1], params[2]);
+            var resut = facade.register(request);
+
             stateHandler.setState(State.SIGNEDIN);
             return "Successfully registered. You are now signed in as " + params[0] + ".";
         }
