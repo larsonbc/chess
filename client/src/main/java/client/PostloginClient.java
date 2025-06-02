@@ -14,6 +14,7 @@ public class PostloginClient {
 
     private final StateHandler stateHandler;
     private final ServerFacade facade;
+    private int numGames = 0;
 
     public PostloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
@@ -56,6 +57,7 @@ public class PostloginClient {
             var gameName = params[0];
             var request = new CreateGameRequest(gameName);
             facade.createGame(request, stateHandler.getAuthToken());
+            numGames++;
             return "Successfully created game " + params[0];
         } else {
             throw new ResponseException(400, "Expected: <GAME NAME>");
@@ -90,8 +92,12 @@ public class PostloginClient {
         }
     }
 
-    public String watchGame(String... params) {
+    public String watchGame(String... params) throws ResponseException {
         if (params.length == 1) {
+            int gameID = Integer.parseInt(params[0]);
+            if (gameID < 1 || gameID > numGames) {
+                throw new ResponseException(400, "Invalid game ID.");
+            }
             ChessGame game = new ChessGame();
             System.out.print("\u001b[0m"); // Reset any previous color
             ChessBoardPrinter.printBoard(game.getBoard(), false);
