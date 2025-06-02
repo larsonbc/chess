@@ -8,8 +8,8 @@ import server.ServerFacade;
 import java.util.Arrays;
 
 public class PreloginClient {
-    private StateHandler stateHandler;
-    private ServerFacade facade;
+    private final StateHandler stateHandler;
+    private final ServerFacade facade;
 
     public PreloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
@@ -36,6 +36,7 @@ public class PreloginClient {
             var request = new LoginRequest(username, password);
             var result = facade.login(request);
             stateHandler.setState(State.SIGNEDIN);
+            stateHandler.setAuthToken(result.authToken());
             return "You are now signed in as " + username + ".";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
@@ -44,12 +45,13 @@ public class PreloginClient {
     public String register(String... params) throws ResponseException {
         if (params.length == 3) {
             var request = new RegisterRequest(params[0], params[1], params[2]);
-            var resut = facade.register(request);
+            var result = facade.register(request);
 
             stateHandler.setState(State.SIGNEDIN);
+            stateHandler.setAuthToken(result.authToken());
             return "Successfully registered. You are now signed in as " + params[0] + ".";
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String help() {

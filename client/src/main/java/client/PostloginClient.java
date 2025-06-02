@@ -1,6 +1,7 @@
 package client;
 
 import exception.ResponseException;
+import request.LogoutRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -57,7 +58,12 @@ public class PostloginClient {
         }
     }
 
-    public String logout() {
+    public String logout() throws ResponseException {
+        var authToken = stateHandler.getAuthToken();
+        var request = new LogoutRequest(authToken);
+        facade.logout(request);
+
+        stateHandler.setAuthToken(null);
         stateHandler.setState(State.SIGNEDOUT);
         return "You are now logged out";
     }
