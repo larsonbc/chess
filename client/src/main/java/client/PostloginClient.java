@@ -75,7 +75,7 @@ public class PostloginClient {
             facade.joinGame(request, stateHandler.getAuthToken());
             ChessGame game = new ChessGame();
             System.out.print("\u001b[0m"); // Reset any previous color
-            ChessBoardPrinter.printBoard(game.getBoard(), true);
+            ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             return "Expected: <GAME ID> <COLOR>";
@@ -84,6 +84,9 @@ public class PostloginClient {
 
     public String watchGame(String... params) {
         if (params.length == 1) {
+            ChessGame game = new ChessGame();
+            System.out.print("\u001b[0m"); // Reset any previous color
+            ChessBoardPrinter.printBoard(game.getBoard(), false);
             return "Watching game with ID: " + params[0];
         } else {
             return "Expected: <GAME ID>";
