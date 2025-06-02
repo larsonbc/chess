@@ -72,13 +72,21 @@ public class PostloginClient {
             }
             var color = params[1].toUpperCase();
             var request = new JoinGameRequest(color, gameID);
-            facade.joinGame(request, stateHandler.getAuthToken());
+            try {
+                facade.joinGame(request, stateHandler.getAuthToken());
+            } catch (ResponseException e) {
+                if (e.getMessage().toLowerCase().contains("bad request")) {
+                    throw new ResponseException(400, "Could not join game: Invalid game ID or color already taken.");
+                } else {
+                    throw e; // rethrow if it's something else
+                }
+            }
             ChessGame game = new ChessGame();
-            System.out.print("\u001b[0m"); // Reset any previous color
+            System.out.print("\u001b[0m");
             ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
-            return "Expected: <GAME ID> <COLOR>";
+            throw new ResponseException(400, "Expected: <GAME ID> <COLOR>");
         }
     }
 

@@ -32,12 +32,20 @@ public class PreloginClient {
         if (params.length == 2) {
             var username = params[0];
             var password = params[1];
-
             var request = new LoginRequest(username, password);
-            var result = facade.login(request);
-            stateHandler.setState(State.SIGNEDIN);
-            stateHandler.setAuthToken(result.authToken());
-            return "You are now signed in as " + username + ".";
+            try {
+                var result = facade.login(request);
+                stateHandler.setState(State.SIGNEDIN);
+                stateHandler.setAuthToken(result.authToken());
+                return "You are now signed in as " + username + ".";
+            } catch (ResponseException e) {
+                String message = e.getMessage().toLowerCase();
+                if (message.contains("unauthorized")) {
+                    throw new ResponseException(401, "Invalid username or password.");
+                } else {
+                    throw e; // rethrow other unexpected errors
+                }
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -45,11 +53,19 @@ public class PreloginClient {
     public String register(String... params) throws ResponseException {
         if (params.length == 3) {
             var request = new RegisterRequest(params[0], params[1], params[2]);
-            var result = facade.register(request);
-
-            stateHandler.setState(State.SIGNEDIN);
-            stateHandler.setAuthToken(result.authToken());
-            return "Successfully registered. You are now signed in as " + params[0] + ".";
+            try {
+                var result = facade.register(request);
+                stateHandler.setState(State.SIGNEDIN);
+                stateHandler.setAuthToken(result.authToken());
+                return "Successfully registered. You are now signed in as " + params[0] + ".";
+            } catch (ResponseException e) {
+                String message = e.getMessage().toLowerCase();
+                if (message.contains("already taken")) {
+                    throw new ResponseException(400, "Username is already taken.");
+                } else {
+                    throw e; // Rethrow other errors unchanged
+                }
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }

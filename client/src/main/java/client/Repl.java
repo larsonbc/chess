@@ -39,8 +39,9 @@ public class Repl {
                 }
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+                //var msg = e.toString();
+                var msg = e.getMessage();
+                System.out.print("\u001b[31m" + msg + "\u001b[0m");
             }
         }
         System.out.println();
