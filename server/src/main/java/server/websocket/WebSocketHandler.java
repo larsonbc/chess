@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -32,9 +33,7 @@ public class WebSocketHandler {
 
             // Throws a custom Unauthorized Exception - mine may work differently
             //String username = userService.getUsernameFromAuth(command.getAuthToken());
-            String username = getUsername(command.getAuthToken());
-
-            saveSession(command.getGameID(), session);
+            String username = getUsername(command.getAuthToken(), session);
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, (UserGameCommand) command); //change from UserGameCommand to Connect Command
@@ -48,9 +47,8 @@ public class WebSocketHandler {
 //            // Serializes and sends the error message
 //            sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
 //        }
-        } catch (Exception ex) {
+        } catch (Exception ex) { //create custom unauthorized exception
             ex.printStackTrace();
-            //sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
         }
     }
 
@@ -67,15 +65,15 @@ public class WebSocketHandler {
         connections.broadcast(username, message);
     }
 
-    private String getUsername(String authToken) {
+    private String getUsername(String authToken, Session session) throws Exception {
         try {
             return userService.getUsernameFromAuth(authToken);
         } catch (DataAccessException e) {
-            return "null";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error: Invalid Auth Token");
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
+            throw new Exception("Error");
         }
     }
 
-    private void saveSession(int gameID, Session session) {
-        //make sure session is in connection manager
-    }
 }
