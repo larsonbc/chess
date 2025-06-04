@@ -43,7 +43,7 @@ public class Server {
         createGameHandler = new CreateGameHandler(gameService);
         joinGameHandler = new JoinGameHandler(gameService);
         listGamesHandler = new ListGamesHandler(gameService);
-        webSocketHandler = new WebSocketHandler(userService);
+        webSocketHandler = new WebSocketHandler(userService, gameService);
     }
 
     public int run(int desiredPort) {

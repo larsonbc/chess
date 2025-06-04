@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -53,6 +54,13 @@ public class ConnectionManager {
                 }
             }
         }
+    }
+
+    public void sendError(String username, String msg) throws IOException {
+        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+        errorMessage.setErrorMessage(msg);
+        var conn = connections.get(username);
+        conn.send(new Gson().toJson(errorMessage));
     }
 
 }

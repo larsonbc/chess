@@ -83,4 +83,8 @@ public class GameService {
         gameDAO.clear();
         authDAO.clear();
     }
+
+    public ArrayList<GameData> getGames() {
+        return gameDAO.listGames();
+    }
 }
