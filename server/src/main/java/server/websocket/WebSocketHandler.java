@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -22,7 +23,7 @@ public class WebSocketHandler {
             // Throws a custom Unauthorized Exception - mine may work differently
             String username = getUsername(command.getAuthToken());
 
-            saveSession(command.getGameID());
+            saveSession(command.getGameID(), session);
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, (UserGameCommand) command); //change from UserGameCommand to Connect Command
@@ -44,16 +45,17 @@ public class WebSocketHandler {
 
     private void connect(Session session, String username, UserGameCommand command) throws IOException {
         connections.add(username, session);
-        var message = String.format("%s is here", username);
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(username, serverMessage);
+        ChessGame game = new ChessGame(); // may need to change to get game from server with command game ID
+        connections.sendLoadGame(username, game);
+        var message = String.format("%s has joined the game", username);
+        connections.broadcast(username, message);
     }
 
     private String getUsername(String authToken) {
         return "Test_Username";
     }
 
-    private void saveSession(int ID) {
+    private void saveSession(int gameID, Session session) {
         //make sure session is in connection manager
     }
 }
