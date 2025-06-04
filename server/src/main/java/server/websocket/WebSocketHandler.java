@@ -3,6 +3,8 @@ package server.websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import exception.UnauthorizedException;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -27,7 +29,7 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String msg) {
+    public void onMessage(Session session, String msg) throws IOException {
         try {
             UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
 
@@ -43,12 +45,10 @@ public class WebSocketHandler {
                 default -> System.out.println("Not able to do stuff");
 
             }
-//        } catch (UnauthorizedException ex) {
-//            // Serializes and sends the error message
-//            sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
-//        }
-        } catch (Exception ex) { //create custom unauthorized exception
-            ex.printStackTrace();
+        } catch (UnauthorizedException ex) { //create custom unauthorized exception
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+            errorMessage.setErrorMessage("Error: Invalid Auth Token");
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
     }
 
@@ -65,14 +65,11 @@ public class WebSocketHandler {
         connections.broadcast(username, message);
     }
 
-    private String getUsername(String authToken, Session session) throws Exception {
+    private String getUsername(String authToken, Session session) throws UnauthorizedException, IOException {
         try {
             return userService.getUsernameFromAuth(authToken);
         } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
-            errorMessage.setErrorMessage("Error: Invalid Auth Token");
-            session.getRemote().sendString(new Gson().toJson(errorMessage));
-            throw new Exception("Error");
+            throw new UnauthorizedException(401, "Error, Invalid Auth Token");
         }
     }
 
