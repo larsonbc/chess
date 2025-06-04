@@ -1,12 +1,13 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
 import exception.UnauthorizedException;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -18,6 +19,7 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @WebSocket
 public class WebSocketHandler {
@@ -68,10 +70,21 @@ public class WebSocketHandler {
     }
 
     private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
-        //connections.add(username, session);
-        //validate move
-        //update game
         ChessGame game = new ChessGame(); //change to update game
+        ChessMove move = command.getMove();
+        //validates correct move
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) game.validMoves(move.getStartPosition());
+        if (validMoves == null || !validMoves.contains(move)) {
+            connections.sendError(username, "Error: Invalid Move");
+            return;
+        }
+        //validates correct turn
+        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+        if (piece.getTeamColor() != game.getTeamTurn()) {
+            connections.sendError(username, "Error: It's not your turn");
+            return;
+        }
+        //need to add functionality to update game
         connections.sendLoadGame(username, game, true);
         var message = String.format("%s has made a move", username);
         connections.broadcast(username, message);
