@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -14,6 +15,11 @@ import java.io.IOException;
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
+    private final UserService userService;
+
+    public WebSocketHandler(UserService userService) {
+        this.userService = userService;
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) {
@@ -21,7 +27,7 @@ public class WebSocketHandler {
             UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
 
             // Throws a custom Unauthorized Exception - mine may work differently
-            String username = getUsername(command.getAuthToken());
+            String username = userService.getUsernameFromAuth(command.getAuthToken());
 
             saveSession(command.getGameID(), session);
 

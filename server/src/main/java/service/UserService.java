@@ -71,4 +71,12 @@ public class UserService {
         authDAO.clear();
     }
 
+    public String getUsernameFromAuth(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException(401, "Error: unauthorized");
+        }
+        return authData.username();
+    }
+
 }
