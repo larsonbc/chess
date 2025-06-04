@@ -2,6 +2,8 @@ package server.websocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
 import exception.UnauthorizedException;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
@@ -10,6 +12,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.ServerMessage;
@@ -31,15 +34,27 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) throws IOException {
         try {
-            UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
+            //UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
 
             // Throws a custom Unauthorized Exception - mine may work differently
             //String username = userService.getUsernameFromAuth(command.getAuthToken());
-            String username = getUsername(command.getAuthToken(), session);
+            //String username = getUsername(command.getAuthToken(), session);
 
-            switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username, (UserGameCommand) command); //change from UserGameCommand to Connect Command
-//                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
+            JsonObject json = JsonParser.parseString(msg).getAsJsonObject();
+            String commandType = json.get("commandType").getAsString();
+            String authToken = json.get("authToken").getAsString();
+            String username = getUsername(authToken, session);
+
+            switch (commandType) {
+                case "CONNECT" -> {
+                    //connect(session, username, (UserGameCommand) command); //change from UserGameCommand to Connect Command
+                    UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
+                    connect(session, username, command);
+                }
+                case "MAKE_MOVE" -> {
+                    MakeMoveCommand command = new Gson().fromJson(msg, MakeMoveCommand.class);
+                    makeMove(session, username, command);
+                }
 //                case LEAVE -> leaveGame(session, username, (LeaveGameCommand) command);
 //                case RESIGN -> resign(session, username, (ResignCommand) command);
                 default -> System.out.println("Not able to do stuff");
@@ -52,6 +67,16 @@ public class WebSocketHandler {
         }
     }
 
+    private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
+        //connections.add(username, session);
+        //validate move
+        //update game
+        ChessGame game = new ChessGame(); //change to update game
+        connections.sendLoadGame(username, game, true);
+        var message = String.format("%s has made a move", username);
+        connections.broadcast(username, message);
+    }
+
     private void connect(Session session, String username, UserGameCommand command) throws IOException {
         connections.add(username, session);
         int numGames = gameService.getGames().size();
@@ -60,7 +85,7 @@ public class WebSocketHandler {
             return;
         }
         ChessGame game = new ChessGame(); // may need to change to get game from server with command game ID
-        connections.sendLoadGame(username, game);
+        connections.sendLoadGame(username, game, false);
         var message = String.format("%s has joined the game", username);
         connections.broadcast(username, message);
     }
@@ -72,5 +97,7 @@ public class WebSocketHandler {
             throw new UnauthorizedException(401, "Error, Invalid Auth Token");
         }
     }
+
+
 
 }

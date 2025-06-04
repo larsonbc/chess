@@ -44,12 +44,16 @@ public class ConnectionManager {
         }
     }
 
-    public void sendLoadGame(String username, ChessGame game) throws IOException {
+    public void sendLoadGame(String username, ChessGame game, boolean sendToAll) throws IOException {
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         loadGameMessage.setGame(game);
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (c.username.equals(username)) {
+                if (!sendToAll) {
+                    if (c.username.equals(username)) {
+                        c.send(new Gson().toJson(loadGameMessage));
+                    }
+                } else {
                     c.send(new Gson().toJson(loadGameMessage));
                 }
             }
