@@ -38,12 +38,6 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) throws IOException {
         try {
-            //UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
-
-            // Throws a custom Unauthorized Exception - mine may work differently
-            //String username = userService.getUsernameFromAuth(command.getAuthToken());
-            //String username = getUsername(command.getAuthToken(), session);
-
             JsonObject json = JsonParser.parseString(msg).getAsJsonObject();
             String commandType = json.get("commandType").getAsString();
             String authToken = json.get("authToken").getAsString();
@@ -75,6 +69,34 @@ public class WebSocketHandler {
     }
 
     private void resign(Session session, String username, UserGameCommand command) throws IOException {
+        GameData gameData = gameService.getGames().get(command.getGameID() - 1);
+        if (gameData == null) {
+            connections.sendError(username, "Error: Invalid Game ID");
+        }
+        ChessGame game = gameData.game();
+        ChessGame.TeamColor playerColor = null;
+        // Doesn't allow observer to resign
+        if (username.equals(gameData.whiteUsername())) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else if (username.equals(gameData.blackUsername())) {
+            playerColor = ChessGame.TeamColor.BLACK;
+        } else {
+            connections.sendError(username, "Error: Spectators cannot resign.");
+            return;
+        }
+        // Doesn't allow multiple resignations
+        if (game.isResigned()) {
+            connections.sendError(username, "Error: Game already resigned.");
+            return;
+        }
+        // Set resignation in game and update game state in database
+        game.resign(playerColor);
+        try {
+            gameService.saveGame(command.getGameID(), game);
+        } catch (DataAccessException e) {
+            connections.sendError(username, "Error: Failed to save game state.");
+            return;
+        }
         int numGames = gameService.getGames().size();
         if (command.getGameID() < 0 || command.getGameID() > numGames) {
             connections.sendError(username, "Error: Invalid Game ID");
@@ -84,20 +106,6 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String username, MakeMoveCommand command) throws IOException {
-//        ChessGame game = new ChessGame(); //change to update game
-//        ChessMove move = command.getMove();
-//        //validates correct move
-//        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) game.validMoves(move.getStartPosition());
-//        if (validMoves == null || !validMoves.contains(move)) {
-//            connections.sendError(username, "Error: Invalid Move");
-//            return;
-//        }
-//        //validates correct turn
-//        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
-//        if (piece.getTeamColor() != game.getTeamTurn()) {
-//            connections.sendError(username, "Error: It's not your turn");
-//            return;
-//        }
         GameData gameData = gameService.getGames().get(command.getGameID() - 1);
         if (gameData == null) {
             connections.sendError(username, "Error: Game not found.");
@@ -113,6 +121,11 @@ public class WebSocketHandler {
             playerColor = ChessGame.TeamColor.BLACK;
         } else {
             connections.sendError(username, "Error: Spectators cannot make moves.");
+            return;
+        }
+        // Check if any player has resigned
+        if (game.isResigned()) {
+            connections.sendError(username, "Error: The game is over due to resignation.");
             return;
         }
         // Check if the game is over (checkmate or stalemate)
@@ -158,7 +171,6 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid Game ID");
             return;
         }
-        //ChessGame game = new ChessGame(); // may need to change to get game from server with command game ID
         ChessGame game = gameService.getGames().get(command.getGameID() - 1).game();
         connections.sendLoadGame(username, game, false);
         var message = String.format("%s has joined the game", username);
@@ -172,7 +184,5 @@ public class WebSocketHandler {
             throw new UnauthorizedException(401, "Error, Invalid Auth Token");
         }
     }
-
-
 
 }

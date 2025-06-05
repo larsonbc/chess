@@ -14,6 +14,7 @@ public class ChessGame {
 
     private ChessBoard board = new ChessBoard();
     private TeamColor teamTurn = TeamColor.WHITE;
+    private ChessGame.TeamColor resignedPlayer = null;
 
     public ChessGame() {
         board.resetBoard();
@@ -194,6 +195,18 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void resign(ChessGame.TeamColor playerColor) {
+        this.resignedPlayer = playerColor;
+    }
+
+    public boolean isResigned() {
+        return resignedPlayer != null;
+    }
+
+    public ChessGame.TeamColor getResignedPlayer() {
+        return resignedPlayer;
     }
 
     @Override
