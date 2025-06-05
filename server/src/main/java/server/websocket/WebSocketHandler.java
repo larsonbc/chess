@@ -53,7 +53,10 @@ public class WebSocketHandler {
                     MakeMoveCommand command = new Gson().fromJson(msg, MakeMoveCommand.class);
                     makeMove(username, command);
                 }
-//                case LEAVE -> leaveGame(session, username, (LeaveGameCommand) command);
+                case "LEAVE" -> {
+                    UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
+                    leave(session, username, command);
+                }
                 case "RESIGN" -> {
                     UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
                     resign(session, username, command);
@@ -61,11 +64,44 @@ public class WebSocketHandler {
                 default -> System.out.println("Not able to do stuff");
 
             }
-        } catch (UnauthorizedException ex) { //create custom unauthorized exception
+        } catch (UnauthorizedException ex) {
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
             errorMessage.setErrorMessage("Error: Invalid Auth Token");
             session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
+    }
+
+    private void leave(Session session, String username, UserGameCommand command) throws IOException {
+        int gameID = command.getGameID();
+        GameData gameData = gameService.getGames().get(command.getGameID() - 1);
+        if (gameData == null) {
+            connections.sendError(username, "Error: Invalid Game ID");
+        }
+        ChessGame game = gameData.game();
+        boolean isPlayer = false;
+        GameData updatedGameData = gameData;
+        // Check if the user is white or black player and not observer
+        if (username.equals(gameData.whiteUsername())) {
+            updatedGameData = new GameData(gameID, null, gameData.blackUsername(), gameData.gameName(), game);
+            isPlayer = true;
+        } else if (username.equals(gameData.blackUsername())) {
+            updatedGameData = new GameData(gameID, gameData.whiteUsername(), null, gameData.gameName(), game);
+            isPlayer = true;
+        }
+        // Save updated game if player left
+        if (isPlayer) {
+            try {
+                gameService.updateGamePlayers(updatedGameData); // You'll need this method (see below)
+                gameService.saveGame(gameID, game); // Always save the game state
+            } catch (DataAccessException e) {
+                connections.sendError(username, "Error: Failed to update game.");
+                return;
+            }
+        }
+        // Remove the user from WebSocket connections
+        connections.remove(username);
+        var message = String.format("%s has left the game", username);
+        connections.broadcast(username, message);
     }
 
     private void resign(Session session, String username, UserGameCommand command) throws IOException {

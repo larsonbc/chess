@@ -92,4 +92,8 @@ public class GameService {
     public void saveGame(int gameID, ChessGame newGameState) throws DataAccessException {
         gameDAO.saveGame(gameID, newGameState);
     }
+
+    public void updateGamePlayers(GameData updatedGame) throws DataAccessException {
+        gameDAO.updateGamePlayers(updatedGame);
+    }
 }

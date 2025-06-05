@@ -133,4 +133,28 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
+    @Override
+    public void updateGamePlayers(GameData updatedGame) throws DataAccessException {
+        int gameID = updatedGame.gameID();
+        ChessGame newGame = updatedGame.game();
+        String whiteUsername = updatedGame.whiteUsername();
+        String blackUsername = updatedGame.blackUsername();
+        if (newGame == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        var statement = "UPDATE game SET white_username = ?, black_username = ? WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            var ps = conn.prepareStatement(statement);
+            ps.setString(1, whiteUsername);
+            ps.setString(2, blackUsername);
+            ps.setInt(3, gameID);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DataAccessException(400, "Error: Unable to update game players");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

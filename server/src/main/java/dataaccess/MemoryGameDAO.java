@@ -108,4 +108,15 @@ public class MemoryGameDAO implements GameDAO{
         );
         games.set(index, updatedGame);
     }
+
+    @Override
+    public void updateGamePlayers(GameData updatedGame) throws DataAccessException {
+        for (int i = 0; i < games.size(); i++) {
+            if (games.get(i).gameID() == updatedGame.gameID()) {
+                games.set(i, updatedGame);
+                return;
+            }
+        }
+        throw new DataAccessException(400, "Error: Game not found.");
+    }
 }
