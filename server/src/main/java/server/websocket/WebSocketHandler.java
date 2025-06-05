@@ -101,7 +101,7 @@ public class WebSocketHandler {
         // Remove the user from WebSocket connections
         connections.remove(username);
         var message = String.format("%s has left the game", username);
-        connections.broadcast(username, message);
+        connections.broadCastToGame(command.getGameID(), username, message);
     }
 
     private void resign(Session session, String username, UserGameCommand command) throws IOException {
@@ -138,7 +138,7 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid Game ID");
             return;
         }
-        connections.sendResignNotification(username);
+        connections.sendResignNotification(username, command.getGameID());
     }
 
     private void makeMove(String username, MakeMoveCommand command) throws IOException {
@@ -195,22 +195,22 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid move.");
             return;
         }
-        connections.sendLoadGame(username, game, true);
+        connections.sendLoadGame(username, game, command.getGameID(), true);
         var message = String.format("%s has made a move", username);
-        connections.broadcast(username, message);
+        connections.broadCastToGame(command.getGameID(), username, message);
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws IOException {
-        connections.add(username, session);
+        connections.add(username, session, command.getGameID());
         int numGames = gameService.getGames().size();
         if (command.getGameID() < 0 || command.getGameID() > numGames) {
             connections.sendError(username, "Error: Invalid Game ID");
             return;
         }
         ChessGame game = gameService.getGames().get(command.getGameID() - 1).game();
-        connections.sendLoadGame(username, game, false);
+        connections.sendLoadGame(username, game, command.getGameID(), false);
         var message = String.format("%s has joined the game", username);
-        connections.broadcast(username, message);
+        connections.broadCastToGame(command.getGameID(), username, message);
     }
 
     private String getUsername(String authToken, Session session) throws UnauthorizedException, IOException {

@@ -14,50 +14,41 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Integer> userGameMap = new ConcurrentHashMap<>();
 
-    public void add(String username, Session session) {
+    public void add(String username, Session session, int gameID) {
         var connection = new Connection(username, session);
         connections.put(username, connection);
+        userGameMap.put(username, gameID);
     }
 
     public void remove(String username) {
         connections.remove(username);
+        userGameMap.remove(username);
     }
 
-    public void broadcast(String excludeName, String msg) throws IOException { //change notification type from object to what it should be (Notification?)
-        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        notificationMessage.setMessage(msg);
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.username.equals(excludeName)) {
-                    c.send(new Gson().toJson(notificationMessage));
-                }
-            } else {
-                removeList.add(c);
-            }
-        }
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.username);
-        }
-    }
-
-    public void sendLoadGame(String username, ChessGame game, boolean sendToAll) throws IOException {
+    public void sendLoadGame(String username, ChessGame game, int gameID, boolean sendToAll) throws IOException {
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         loadGameMessage.setGame(game);
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
+        String json = new Gson().toJson(loadGameMessage);
+
+        for (var entry : connections.entrySet()) {
+            String currentUser = entry.getKey();
+            Connection connection = entry.getValue();
+            Integer userGameID = userGameMap.get(currentUser);
+
+            if (connection.session.isOpen()) {
                 if (!sendToAll) {
-                    if (c.username.equals(username)) {
-                        c.send(new Gson().toJson(loadGameMessage));
+                    if (currentUser.equals(username)) {
+                        connection.send(json);
                     }
-                } else {
-                    c.send(new Gson().toJson(loadGameMessage));
+                } else if (userGameID != null && userGameID == gameID) {
+                    connection.send(json);
                 }
             }
         }
     }
+
 
     public void sendError(String username, String msg) throws IOException {
         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
@@ -66,20 +57,61 @@ public class ConnectionManager {
         conn.send(new Gson().toJson(errorMessage));
     }
 
-    public void sendResignNotification(String username) throws IOException {
+    public void sendResignNotification(String username, int gameID) throws IOException {
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         notificationMessage.setMessage(username + " has resigned");
+        String json = new Gson().toJson(notificationMessage);
+
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                c.send(new Gson().toJson(notificationMessage));
+        for (var entry : connections.entrySet()) {
+            String currentUser = entry.getKey();
+            Connection connection = entry.getValue();
+            Integer userGameID = userGameMap.get(currentUser);
+
+            if (connection.session.isOpen()) {
+                if (userGameID != null && userGameID == gameID) {
+                    connection.send(json);
+                }
             } else {
-                removeList.add(c);
+                removeList.add(connection);
             }
         }
-        // Clean up any connections that were left open.
+
+        // Clean up any closed sessions
         for (var c : removeList) {
             connections.remove(c.username);
+            userGameMap.remove(c.username);
+        }
+    }
+
+
+    public void broadCastToGame(int gameID, String excludeName, String message) {
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notificationMessage.setMessage(message);
+        String json = new Gson().toJson(notificationMessage);
+        var removeList = new ArrayList<Connection>();
+
+        for (var entry : connections.entrySet()) {
+            String username = entry.getKey();
+            Connection connection = entry.getValue();
+            Session session = connection.session;
+            Integer userGameID = userGameMap.get(username);
+
+            if (connection.session.isOpen()) {
+                if (!username.equals(excludeName) && userGameID != null && userGameID == gameID) {
+                    try {
+                        connection.send(json);
+                    } catch (IOException e) {
+                        System.err.printf("Failed to send message to %s: %s%n", username, e.getMessage());
+                    }
+                }
+            } else {
+                removeList.add(connection);
+            }
+        }
+        for (var c : removeList) {
+            connections.remove(c.username);
+            userGameMap.remove(c.username);
         }
     }
 
