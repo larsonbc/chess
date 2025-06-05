@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -102,6 +103,13 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Spectators cannot make moves.");
             return;
         }
+        // 🔒 Check if the game is over (checkmate or stalemate)
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK) ||
+                game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            //connections.sendError(username, "Error: The game is over.");
+            connections.sendLoadGame(username, game, true);
+            return;
+        }
         // Check if it's the player's turn
         if (playerColor != game.getTeamTurn()) {
             connections.sendError(username, "Error: It's not your turn.");
@@ -119,6 +127,13 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid move.");
             return;
         }
+        //Make move
+        try {
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            connections.sendError(username, "Error: Invalid move.");
+            return;
+        }
         //need to add functionality to update game
         connections.sendLoadGame(username, game, true);
         var message = String.format("%s has made a move", username);
@@ -132,7 +147,8 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid Game ID");
             return;
         }
-        ChessGame game = new ChessGame(); // may need to change to get game from server with command game ID
+        //ChessGame game = new ChessGame(); // may need to change to get game from server with command game ID
+        ChessGame game = gameService.getGames().get(command.getGameID() - 1).game();
         connections.sendLoadGame(username, game, false);
         var message = String.format("%s has joined the game", username);
         connections.broadcast(username, message);
