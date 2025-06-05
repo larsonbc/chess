@@ -14,7 +14,6 @@ public class PostloginClient {
 
     private final StateHandler stateHandler;
     private final ServerFacade facade;
-    private int numGames = 0;
 
     public PostloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
@@ -36,12 +35,11 @@ public class PostloginClient {
     }
 
     public String listGames() throws ResponseException {
-        if (numGames == 0) {
-            return "No current games";
-        }
         var games = facade.listGames(stateHandler.getAuthToken());
         var result = new StringBuilder();
-
+        if (games.games().isEmpty()) {
+            return "No current games";
+        }
         int index = 1;
         for (var game : games.games()) {
             result.append(String.format(
@@ -60,7 +58,6 @@ public class PostloginClient {
             var gameName = params[0];
             var request = new CreateGameRequest(gameName);
             facade.createGame(request, stateHandler.getAuthToken());
-            numGames++;
             return "Successfully created game " + params[0];
         } else {
             throw new ResponseException(400, "Expected: <GAME NAME>");
@@ -89,6 +86,7 @@ public class PostloginClient {
             ChessGame game = new ChessGame();
             System.out.print("\u001b[0m");
             ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
+            stateHandler.setState(State.GAMEPLAY);
             return "Joined game with ID: " + params[0] + ", joined as " + params[1];
         } else {
             throw new ResponseException(400, "Expected: <GAME ID> <COLOR>");
@@ -104,6 +102,7 @@ public class PostloginClient {
                 throw new ResponseException(400, "Game ID must be a number");
             }
             int gameID = Integer.parseInt(params[0]);
+            int numGames = facade.listGames(stateHandler.getAuthToken()).games().size();
             if (gameID < 1 || gameID > numGames) {
                 throw new ResponseException(400, "Invalid game ID.");
             }
