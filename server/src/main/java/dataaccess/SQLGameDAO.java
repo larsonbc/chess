@@ -113,4 +113,24 @@ public class SQLGameDAO implements GameDAO{
         return new GameData(id, whiteUsername, blackUsername, gameName, gameState);
     }
 
+    public void saveGame(int gameID, ChessGame newGameState) throws DataAccessException {
+        GameData oldGame = getGame(gameID);
+        if (oldGame == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        String json = new Gson().toJson(newGameState);
+        var statement = "UPDATE game SET game = ? WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            var ps = conn.prepareStatement(statement);
+            ps.setString(1, json);
+            ps.setInt(2, gameID);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DataAccessException(400, "Error: Game not found");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
 }

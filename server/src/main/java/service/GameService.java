@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -86,5 +87,9 @@ public class GameService {
 
     public ArrayList<GameData> getGames() {
         return gameDAO.listGames();
+    }
+
+    public void saveGame(int gameID, ChessGame newGameState) throws DataAccessException {
+        gameDAO.saveGame(gameID, newGameState);
     }
 }

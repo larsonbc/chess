@@ -103,11 +103,10 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Spectators cannot make moves.");
             return;
         }
-        // 🔒 Check if the game is over (checkmate or stalemate)
+        // Check if the game is over (checkmate or stalemate)
         if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK) ||
                 game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK)) {
-            //connections.sendError(username, "Error: The game is over.");
-            connections.sendLoadGame(username, game, true);
+            connections.sendError(username, "Error: The game is over.");
             return;
         }
         // Check if it's the player's turn
@@ -127,14 +126,14 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid move.");
             return;
         }
-        //Make move
+        //Make move and update game in database
         try {
             game.makeMove(move);
-        } catch (InvalidMoveException e) {
+            gameService.saveGame(command.getGameID(), game);
+        } catch (InvalidMoveException | DataAccessException e) {
             connections.sendError(username, "Error: Invalid move.");
             return;
         }
-        //need to add functionality to update game
         connections.sendLoadGame(username, game, true);
         var message = String.format("%s has made a move", username);
         connections.broadcast(username, message);

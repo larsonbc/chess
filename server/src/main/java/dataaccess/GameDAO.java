@@ -1,7 +1,9 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface GameDAO {
@@ -10,4 +12,5 @@ public interface GameDAO {
     ArrayList<GameData> listGames();
     boolean updateGame(String playerColor, int gameID, String username) throws DataAccessException;
     void clear() throws DataAccessException;
+    void saveGame(int gameID, ChessGame newGameState) throws DataAccessException;
 }

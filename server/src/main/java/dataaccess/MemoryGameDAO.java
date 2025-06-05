@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -84,5 +85,27 @@ public class MemoryGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException(500, "Error: Unable to clear");
         }
+    }
+
+    @Override
+    public void saveGame(int gameID, ChessGame newGameState) throws DataAccessException {
+        GameData gameData = getGame(gameID);
+        if (gameData == null) {
+            throw new DataAccessException(400, "Error: bad request");
+        }
+        int index = 0;
+        for (int i = 0; i < games.size(); i++) {
+            if (games.get(i).gameID() == gameData.gameID()) {
+                index = i;
+            }
+        }
+        GameData updatedGame = new GameData(
+                gameData.gameID(),
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                newGameState
+        );
+        games.set(index, updatedGame);
     }
 }
