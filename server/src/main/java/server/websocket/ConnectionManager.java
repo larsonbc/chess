@@ -37,7 +37,6 @@ public class ConnectionManager {
                 removeList.add(c);
             }
         }
-
         // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.username);
@@ -65,6 +64,23 @@ public class ConnectionManager {
         errorMessage.setErrorMessage(msg);
         var conn = connections.get(username);
         conn.send(new Gson().toJson(errorMessage));
+    }
+
+    public void sendResignNotification(String username) throws IOException {
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notificationMessage.setMessage(username + " has resigned");
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                c.send(new Gson().toJson(notificationMessage));
+            } else {
+                removeList.add(c);
+            }
+        }
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.username);
+        }
     }
 
 }

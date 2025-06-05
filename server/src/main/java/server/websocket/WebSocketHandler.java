@@ -57,10 +57,13 @@ public class WebSocketHandler {
                 }
                 case "MAKE_MOVE" -> {
                     MakeMoveCommand command = new Gson().fromJson(msg, MakeMoveCommand.class);
-                    makeMove(session, username, command);
+                    makeMove(username, command);
                 }
 //                case LEAVE -> leaveGame(session, username, (LeaveGameCommand) command);
-//                case RESIGN -> resign(session, username, (ResignCommand) command);
+                case "RESIGN" -> {
+                    UserGameCommand command = new Gson().fromJson(msg, UserGameCommand.class);
+                    resign(session, username, command);
+                }
                 default -> System.out.println("Not able to do stuff");
 
             }
@@ -71,7 +74,16 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
+    private void resign(Session session, String username, UserGameCommand command) throws IOException {
+        int numGames = gameService.getGames().size();
+        if (command.getGameID() < 0 || command.getGameID() > numGames) {
+            connections.sendError(username, "Error: Invalid Game ID");
+            return;
+        }
+        connections.sendResignNotification(username);
+    }
+
+    private void makeMove(String username, MakeMoveCommand command) throws IOException {
 //        ChessGame game = new ChessGame(); //change to update game
 //        ChessMove move = command.getMove();
 //        //validates correct move
