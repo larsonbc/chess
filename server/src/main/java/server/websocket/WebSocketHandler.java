@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
 import exception.UnauthorizedException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -70,18 +71,52 @@ public class WebSocketHandler {
     }
 
     private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
-        ChessGame game = new ChessGame(); //change to update game
-        ChessMove move = command.getMove();
-        //validates correct move
-        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) game.validMoves(move.getStartPosition());
-        if (validMoves == null || !validMoves.contains(move)) {
-            connections.sendError(username, "Error: Invalid Move");
+//        ChessGame game = new ChessGame(); //change to update game
+//        ChessMove move = command.getMove();
+//        //validates correct move
+//        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) game.validMoves(move.getStartPosition());
+//        if (validMoves == null || !validMoves.contains(move)) {
+//            connections.sendError(username, "Error: Invalid Move");
+//            return;
+//        }
+//        //validates correct turn
+//        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+//        if (piece.getTeamColor() != game.getTeamTurn()) {
+//            connections.sendError(username, "Error: It's not your turn");
+//            return;
+//        }
+        GameData gameData = gameService.getGames().get(command.getGameID() - 1);
+        if (gameData == null) {
+            connections.sendError(username, "Error: Game not found.");
             return;
         }
-        //validates correct turn
-        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
-        if (piece.getTeamColor() != game.getTeamTurn()) {
-            connections.sendError(username, "Error: It's not your turn");
+        ChessGame game = gameData.game();
+        ChessMove move = command.getMove();
+        // Determine player's team color
+        ChessGame.TeamColor playerColor = null;
+        if (username.equals(gameData.whiteUsername())) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else if (username.equals(gameData.blackUsername())) {
+            playerColor = ChessGame.TeamColor.BLACK;
+        } else {
+            connections.sendError(username, "Error: Spectators cannot make moves.");
+            return;
+        }
+        // Check if it's the player's turn
+        if (playerColor != game.getTeamTurn()) {
+            connections.sendError(username, "Error: It's not your turn.");
+            return;
+        }
+        // Check that the piece belongs to the player
+        ChessPiece movingPiece = game.getBoard().getPiece(move.getStartPosition());
+        if (movingPiece == null || movingPiece.getTeamColor() != playerColor) {
+            connections.sendError(username, "Error: You can only move your own pieces.");
+            return;
+        }
+        // Validate move
+        ArrayList<ChessMove> validMoves = (ArrayList<ChessMove>) game.validMoves(move.getStartPosition());
+        if (validMoves == null || !validMoves.contains(move)) {
+            connections.sendError(username, "Error: Invalid move.");
             return;
         }
         //need to add functionality to update game
