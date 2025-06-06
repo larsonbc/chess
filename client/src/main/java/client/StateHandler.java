@@ -3,6 +3,9 @@ package client;
 public class StateHandler {
     private State state = State.SIGNEDOUT;
     private String authToken;
+    private GameplayClient gameplayClient;
+    private int currentGameId;
+    private String playerColor;
 
     public State getState() {
         return state;
@@ -18,5 +21,29 @@ public class StateHandler {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public GameplayClient getGameplayClient() {
+        return gameplayClient;
+    }
+
+    public void setGameplayClient(GameplayClient gameplayClient) {
+        this.gameplayClient = gameplayClient;
+    }
+
+    public int getCurrentGameId() {
+        return currentGameId;
+    }
+
+    public void setCurrentGameId(int currentGameId) {
+        this.currentGameId = currentGameId;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
     }
 }

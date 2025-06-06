@@ -1,14 +1,17 @@
 package client;
 
+import model.GameData;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class GameplayClient {
     private final StateHandler stateHandler;
+    private GameData gameData;
 
-    public GameplayClient(StateHandler stateHandler) {
+    public GameplayClient(StateHandler stateHandler, GameData gameData) {
         this.stateHandler = stateHandler;
+        this.gameData = gameData;
     }
 
     public String eval(String input) {

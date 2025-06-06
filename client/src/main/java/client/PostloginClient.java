@@ -89,7 +89,10 @@ public class PostloginClient {
             String gameName = gameData.gameName();
             System.out.print("\u001b[0m");
             ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
+            stateHandler.setCurrentGameId(gameID);
+            stateHandler.setPlayerColor(color);
             stateHandler.setState(State.GAMEPLAY);
+            stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));
             return "Joined game: " + gameName + ", joined as " + params[1];
         } else {
             throw new ResponseException(400, "Expected: <GAME ID> <COLOR>");

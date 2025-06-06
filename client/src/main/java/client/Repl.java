@@ -9,7 +9,6 @@ public class Repl {
     private final PreloginClient preloginClient;
     private PostloginClient postloginClient;
     private final StateHandler stateHandler = new StateHandler();
-    private GameplayClient gameplayClient;
 
     public Repl(String serverUrl) {
         facade = new ServerFacade(serverUrl);
@@ -28,28 +27,33 @@ public class Repl {
 
             try {
                 State currentState = stateHandler.getState();
-                if (currentState == State.SIGNEDOUT) {
-                    result = preloginClient.eval(line);
-                    if (stateHandler.getState() == State.SIGNEDIN) {
-                        postloginClient = new PostloginClient(stateHandler, facade);
-                    }
-                } else if (currentState == State.SIGNEDIN) {
-                    result = postloginClient.eval(line);
-                    if (stateHandler.getState() == State.GAMEPLAY) {
-                        gameplayClient = new GameplayClient(stateHandler);
-                    }
-                } else if (currentState == State.GAMEPLAY) {
-                    result = gameplayClient.eval(line);
-                }
-
-//                if (stateHandler.getState() == State.SIGNEDOUT) {
+//                if (currentState == State.SIGNEDOUT) {
 //                    result = preloginClient.eval(line);
 //                    if (stateHandler.getState() == State.SIGNEDIN) {
 //                        postloginClient = new PostloginClient(stateHandler, facade);
 //                    }
-//                } else {
+//                } else if (currentState == State.SIGNEDIN) {
 //                    result = postloginClient.eval(line);
+//                    if (stateHandler.getState() == State.GAMEPLAY) {
+//                        gameplayClient = new GameplayClient(stateHandler);
+//                    }
+//                } else if (currentState == State.GAMEPLAY) {
+//                    result = gameplayClient.eval(line);
 //                }
+                switch (currentState) {
+                    case SIGNEDOUT -> {
+                        result = preloginClient.eval(line);
+                        if (stateHandler.getState() == State.SIGNEDIN) {
+                            postloginClient = new PostloginClient(stateHandler, facade);
+                        }
+                    }
+                    case SIGNEDIN -> {
+                        result = postloginClient.eval(line);
+                    }
+                    case GAMEPLAY -> {
+                        result = stateHandler.getGameplayClient().eval(line);
+                    }
+                }
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {
                 var msg = e.getMessage();
@@ -60,12 +64,18 @@ public class Repl {
     }
 
     private void printPrompt() {
-        if (stateHandler.getState() == State.SIGNEDOUT) {
-            System.out.print("\n" + "\u001b[0m" + "Chess Login >>> " + "\u001b[32m");
-        } else if (stateHandler.getState() == State.SIGNEDIN) {
-            System.out.print("\n" + "\u001b[0m" + "Chess >>> " + "\u001b[32m");
-        } else if (stateHandler.getState() == State.GAMEPLAY) {
-            System.out.print("\n" + "\u001b[0m" + "Chess Game >>> " + "\u001b[32m");
-        }
+//        if (stateHandler.getState() == State.SIGNEDOUT) {
+//            System.out.print("\n" + "\u001b[0m" + "Chess Login >>> " + "\u001b[32m");
+//        } else if (stateHandler.getState() == State.SIGNEDIN) {
+//            System.out.print("\n" + "\u001b[0m" + "Chess >>> " + "\u001b[32m");
+//        } else if (stateHandler.getState() == State.GAMEPLAY) {
+//            System.out.print("\n" + "\u001b[0m" + "Chess Game >>> " + "\u001b[32m");
+//        }
+        String prompt = switch (stateHandler.getState()) {
+            case SIGNEDOUT -> "Chess Login >>> ";
+            case SIGNEDIN -> "Chess >>> ";
+            case GAMEPLAY -> "Chess Game >>> ";
+        };
+        System.out.print("\n\u001b[0m" + prompt + "\u001b[32m");
     }
 }
