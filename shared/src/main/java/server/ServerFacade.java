@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
 import request.*;
 import result.*;
 
@@ -52,6 +53,11 @@ public class ServerFacade {
     public void clear(String authToken) throws ResponseException {
         var path = "/db";
         this.makeRequest("DELETE", path, null, null, authToken);
+    }
+
+    public GameData getGame(String authToken, int gameID) throws ResponseException {
+        var path = "/get-game?gameID=" + gameID;
+        return this.makeRequest("GET", path, null, GameData.class, authToken);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {

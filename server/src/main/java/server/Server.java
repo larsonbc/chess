@@ -22,6 +22,7 @@ public class Server {
     JoinGameHandler joinGameHandler;
     ListGamesHandler listGamesHandler;
     WebSocketHandler webSocketHandler;
+    GetGameHandler getGameHandler;
 
     public Server() {
         try {
@@ -44,6 +45,7 @@ public class Server {
         joinGameHandler = new JoinGameHandler(gameService);
         listGamesHandler = new ListGamesHandler(gameService);
         webSocketHandler = new WebSocketHandler(userService, gameService);
+        getGameHandler = new GetGameHandler(gameService);
     }
 
     public int run(int desiredPort) {
@@ -66,6 +68,8 @@ public class Server {
         Spark.post("/game", (req, res) -> (createGameHandler.handleCreateGame(req, res)));
         Spark.put("/game", (req, res) -> (joinGameHandler.handleJoinGame(req, res)));
         Spark.get("/game", (req, res) -> (listGamesHandler.handleListGames(req, res)));
+
+        Spark.get("/get-game", (req, res) -> (getGameHandler.handleGetGame(req, res)));
 
         Spark.exception(DataAccessException.class, this::errorHandler);
 

@@ -96,4 +96,15 @@ public class GameService {
     public void updateGamePlayers(GameData updatedGame) throws DataAccessException {
         gameDAO.updateGamePlayers(updatedGame);
     }
+
+    public GameData getGame(String authToken, int gameID) throws DataAccessException {
+        if (authToken == null || authDAO.getAuth(authToken) == null) {
+            throw new DataAccessException(401, "Error, unauthorized");
+        }
+        GameData game = gameDAO.getGame(gameID);
+        if (game == null) {
+            throw new DataAccessException(404, "Error: game not found");
+        }
+        return game;
+    }
 }

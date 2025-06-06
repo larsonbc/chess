@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
+import model.GameData;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
 import request.LogoutRequest;
@@ -78,16 +79,18 @@ public class PostloginClient {
                 facade.joinGame(request, stateHandler.getAuthToken());
             } catch (ResponseException e) {
                 if (e.getMessage().toLowerCase().contains("bad request")) {
-                    throw new ResponseException(400, "Could not join game: Invalid game ID or color already taken.");
+                    throw new ResponseException(400, "Could not join game: Invalid game ID or color");
                 } else {
                     throw e; // rethrow if it's something else
                 }
             }
-            ChessGame game = new ChessGame();
+            GameData gameData = facade.getGame(stateHandler.getAuthToken(), gameID);
+            ChessGame game = gameData.game();
+            String gameName = gameData.gameName();
             System.out.print("\u001b[0m");
             ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
             stateHandler.setState(State.GAMEPLAY);
-            return "Joined game with ID: " + params[0] + ", joined as " + params[1];
+            return "Joined game: " + gameName + ", joined as " + params[1];
         } else {
             throw new ResponseException(400, "Expected: <GAME ID> <COLOR>");
         }
@@ -106,10 +109,12 @@ public class PostloginClient {
             if (gameID < 1 || gameID > numGames) {
                 throw new ResponseException(400, "Invalid game ID.");
             }
-            ChessGame game = new ChessGame();
+            GameData gameData = facade.getGame(stateHandler.getAuthToken(), gameID);
+            ChessGame game = gameData.game();
+            String gameName = gameData.gameName();
             System.out.print("\u001b[0m"); // Reset any previous color
             ChessBoardPrinter.printBoard(game.getBoard(), true);
-            return "Watching game with ID: " + params[0];
+            return "Watching game: " + gameName;
         } else {
             return "Expected: <GAME ID>";
         }
