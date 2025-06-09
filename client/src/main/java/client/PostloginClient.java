@@ -90,7 +90,8 @@ public class PostloginClient {
             ChessGame game = gameData.game();
             String gameName = gameData.gameName();
             System.out.print("\u001b[0m");
-            ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
+            //ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
+            ChessBoardPrinter.highlightMoves(game.getBoard(), color.equals("WHITE"), null, null);
             stateHandler.setCurrentGameId(gameID);
             stateHandler.setPlayerColor(color);
             stateHandler.setState(State.GAMEPLAY);

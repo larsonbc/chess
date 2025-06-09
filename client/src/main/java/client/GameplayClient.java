@@ -1,10 +1,15 @@
 package client;
 
-import client.websocket.ServerMessageObserver;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.GameData;
-import client.websocket.WebSocketFacade;
+import ui.ChessBoardPrinter;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GameplayClient {
     private final StateHandler stateHandler;
@@ -21,7 +26,7 @@ public class GameplayClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
-            case "highlight", "hi" -> highlightLegalMoves();
+            case "highlight", "hi" -> highlightLegalMoves(params);
             case "m", "move", "make" -> makeMove();
             case "r", "redraw" -> redrawBoard();
             case "res", "resign" -> resign();
@@ -30,8 +35,30 @@ public class GameplayClient {
         };
     }
 
-    public String highlightLegalMoves() {
-        return "highlight";
+    public String highlightLegalMoves(String... params) {
+        if (params.length != 1) {
+            return "Expected: <input> (e.g. f5)";
+        }
+        String input = params[0];
+        if (input.length() != 2) {
+            return "Invalid Chess Position";
+        }
+        ChessGame game = gameData.game();
+        ChessPosition position = convertToChessPosition(input);
+        if (position == null) {
+            return "Invalid Chess Position. Please format as following:\n" +
+                    "Letter (column) a-h followed by number 1-8 (row), e.g. f5";
+        }
+        Collection<ChessMove> legalMoves = game.validMoves(position);
+        if (legalMoves == null || legalMoves.isEmpty()) {
+            return "No legal moves for this piece";
+        }
+        Set<ChessPosition> destinations = legalMoves.stream()
+                .map(ChessMove::getEndPosition)
+                .collect(Collectors.toSet());
+        System.out.print("\u001b[0m");
+        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), destinations, position);
+        return "";
     }
 
     public String makeMove() {
@@ -60,5 +87,18 @@ public class GameplayClient {
                 - Resign from game: "res", "resign"
                 - Leave game: "leave"
                 """;
+    }
+
+    public ChessPosition convertToChessPosition(String input) {
+        if (!Character.isLetter(input.charAt(0)) || !Character.isDigit(input.charAt(1))) {
+            return null;
+        }
+        int row = Character.getNumericValue(input.charAt(1));
+        char col = input.charAt(0);
+        if (col > 'h' || row < 1 || row > 8) {
+            return null;
+        }
+        int colNum = col - 'a' + 1;
+        return new ChessPosition(row, colNum);
     }
 }
