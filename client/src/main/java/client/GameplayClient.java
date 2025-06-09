@@ -66,7 +66,9 @@ public class GameplayClient {
     }
 
     public String redrawBoard() {
-        return "redraw";
+        System.out.print("\u001b[0m");
+        ChessBoardPrinter.highlightMoves(gameData.game().getBoard(),stateHandler.getPlayerColor().equals("WHITE"), null, null);
+        return "";
     }
 
     public String resign() {
