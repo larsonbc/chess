@@ -8,6 +8,7 @@ import request.JoinGameRequest;
 import request.LogoutRequest;
 import server.ServerFacade;
 import ui.ChessBoardPrinter;
+import client.websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
@@ -15,6 +16,7 @@ public class PostloginClient {
 
     private final StateHandler stateHandler;
     private final ServerFacade facade;
+    //private final WebSocketFacade ws;
 
     public PostloginClient(StateHandler stateHandler, ServerFacade facade) {
         this.stateHandler = stateHandler;
@@ -92,6 +94,9 @@ public class PostloginClient {
             stateHandler.setCurrentGameId(gameID);
             stateHandler.setPlayerColor(color);
             stateHandler.setState(State.GAMEPLAY);
+//            ws.joinGame(stateHandler.getAuthToken(), gameID);
+            var ws = stateHandler.getWs();
+            ws.joinGame(stateHandler.getAuthToken(), gameID);
             stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));
             return "Joined game: " + gameName + ", joined as " + params[1];
         } else {

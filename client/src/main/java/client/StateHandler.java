@@ -1,4 +1,5 @@
 package client;
+import client.websocket.WebSocketFacade;
 
 public class StateHandler {
     private State state = State.SIGNEDOUT;
@@ -6,6 +7,16 @@ public class StateHandler {
     private GameplayClient gameplayClient;
     private int currentGameId;
     private String playerColor;
+
+    public WebSocketFacade getWs() {
+        return ws;
+    }
+
+    public void setWs(WebSocketFacade ws) {
+        this.ws = ws;
+    }
+
+    private WebSocketFacade ws;
 
     public State getState() {
         return state;

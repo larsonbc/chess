@@ -1,13 +1,15 @@
 package client;
 
+import client.websocket.ServerMessageObserver;
 import model.GameData;
-import server.ServerFacade;
+import client.websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
 public class GameplayClient {
     private final StateHandler stateHandler;
     private GameData gameData;
+    //private final WebSocketFacade ws;
 
     public GameplayClient(StateHandler stateHandler, GameData gameData) {
         this.stateHandler = stateHandler;
