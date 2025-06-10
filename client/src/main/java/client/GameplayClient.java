@@ -1,16 +1,10 @@
 package client;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 import ui.ChessBoardPrinter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameplayClient {
@@ -30,7 +24,7 @@ public class GameplayClient {
         return switch (cmd) {
             case "highlight", "hi" -> highlightLegalMoves(params);
             case "m", "move", "make" -> makeMove(params);
-            case "r", "redraw" -> redrawBoard();
+            case "r", "redraw" -> redrawBoard(null);
             case "res", "resign" -> resign();
             case "leave" -> leave();
             default -> help();
@@ -59,7 +53,7 @@ public class GameplayClient {
                 .map(ChessMove::getEndPosition)
                 .collect(Collectors.toSet());
         System.out.print("\u001b[0m");
-        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), destinations, position);
+        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), position, destinations);
         return "";
     }
 
@@ -97,12 +91,22 @@ public class GameplayClient {
         }
         ChessMove move = new ChessMove(origin, destination, promotionPiece);
         stateHandler.getWs().makeMove(stateHandler.getAuthToken(), gameData.gameID(), move);
+        stateHandler.setPreviousMove(move);
         return "";
     }
 
-    public String redrawBoard() {
+    public String redrawBoard(ChessMove lastMove) {
+//        System.out.print("\u001b[0m");
+//        ChessBoardPrinter.highlightMoves(gameData.game().getBoard(),stateHandler.getPlayerColor().equals("WHITE"), null, null);
+//        return "";
+
         System.out.print("\u001b[0m");
-        ChessBoardPrinter.highlightMoves(gameData.game().getBoard(),stateHandler.getPlayerColor().equals("WHITE"), null, null);
+        ChessBoard board = gameData.game().getBoard();
+        boolean whitePerspective = stateHandler.getPlayerColor().equalsIgnoreCase("WHITE");
+        ChessPosition origin = (lastMove != null) ? lastMove.getStartPosition() : null;
+        ChessPosition destination = (lastMove != null) ? lastMove.getEndPosition() : null;
+        Collection<ChessPosition> highlights = (destination != null) ? List.of(destination) : null;
+        ChessBoardPrinter.highlightMoves(board, whitePerspective, origin, highlights);
         return "";
     }
 

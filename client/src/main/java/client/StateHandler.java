@@ -1,4 +1,5 @@
 package client;
+import chess.ChessMove;
 import client.websocket.WebSocketFacade;
 
 public class StateHandler {
@@ -7,6 +8,7 @@ public class StateHandler {
     private GameplayClient gameplayClient;
     private Integer currentGameId;
     private String playerColor;
+    private ChessMove previousMove;
 
     public WebSocketFacade getWs() {
         return ws;
@@ -56,5 +58,13 @@ public class StateHandler {
 
     public void setPlayerColor(String playerColor) {
         this.playerColor = playerColor;
+    }
+
+    public ChessMove getPreviousMove() {
+        return previousMove;
+    }
+
+    public void setPreviousMove(ChessMove previousMove) {
+        this.previousMove = previousMove;
     }
 }

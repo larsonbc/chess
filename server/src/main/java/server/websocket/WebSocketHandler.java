@@ -195,7 +195,7 @@ public class WebSocketHandler {
             connections.sendError(username, "Error: Invalid move.");
             return;
         }
-        connections.sendLoadGame(username, game, command.getGameID(), true);
+        connections.sendLoadGame(username, game, command.getGameID(), move, true);
         var message = String.format("%s has made a move", username);
         connections.broadCastToGame(command.getGameID(), username, message);
     }
@@ -208,7 +208,7 @@ public class WebSocketHandler {
             return;
         }
         ChessGame game = gameService.getGames().get(command.getGameID() - 1).game();
-        connections.sendLoadGame(username, game, command.getGameID(), false);
+        connections.sendLoadGame(username, game, command.getGameID(), null, false);
         var message = String.format("%s has joined the game", username);
         connections.broadCastToGame(command.getGameID(), username, message);
     }

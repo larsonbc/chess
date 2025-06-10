@@ -91,11 +91,10 @@ public class PostloginClient {
             String gameName = gameData.gameName();
             System.out.print("\u001b[0m");
             //ChessBoardPrinter.printBoard(game.getBoard(), color.equals("WHITE"));
-            ChessBoardPrinter.highlightMoves(game.getBoard(), color.equals("WHITE"), null, null);
+            //ChessBoardPrinter.highlightMoves(game.getBoard(), color.equals("WHITE"), null, null);
             stateHandler.setCurrentGameId(gameID);
             stateHandler.setPlayerColor(color);
             stateHandler.setState(State.GAMEPLAY);
-//            ws.joinGame(stateHandler.getAuthToken(), gameID);
             var ws = stateHandler.getWs();
             ws.joinGame(stateHandler.getAuthToken(), gameID);
             stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));

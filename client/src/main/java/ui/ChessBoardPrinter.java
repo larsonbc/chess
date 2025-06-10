@@ -50,11 +50,53 @@ public class ChessBoardPrinter {
     }
 
 
-
+//    public static void highlightMoves(ChessBoard board, boolean whitePerspective,
+//                                      Collection<ChessPosition> highlights, ChessPosition origin) {
+//        printColumnLabels(whitePerspective);
+//
+//        int startRow = whitePerspective ? 8 : 1;
+//        int endRow = whitePerspective ? 0 : 9;
+//        int stepRow = whitePerspective ? -1 : 1;
+//
+//        for (int row = startRow; row != endRow; row += stepRow) {
+//            System.out.print(row + " ");  // Row label
+//
+//            for (int col = 1; col <= 8; col++) {
+//                int file = whitePerspective ? col : 9 - col;
+//
+//                ChessPosition position = new ChessPosition(row, file);
+//                ChessPiece piece = board.getPiece(position);
+//
+//                boolean isHighlighted = highlights != null && highlights.contains(position);
+//                boolean isOrigin = origin != null && origin.equals(position);
+//                boolean isLightSquare = (row + file) % 2 != 0;
+//
+//                String bgColor;
+//                if (isOrigin) {
+//                    bgColor = SET_BG_COLOR_YELLOW;
+//                } else if (isHighlighted) {
+//                    bgColor = SET_BG_COLOR_GREEN;
+//                } else {
+//                    bgColor = isLightSquare ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_BLACK;
+//                }
+//
+//                String textColor = piece == null
+//                        ? SET_TEXT_COLOR_WHITE
+//                        : (piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE);
+//
+//                String symbol = (piece == null) ? " " : getPieceLetter(piece);
+//                System.out.print(bgColor + textColor + " " + symbol + " " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+//            }
+//
+//            System.out.println(" " + row);
+//        }
+//
+//        printColumnLabels(whitePerspective);
+//    }
 
 
     public static void highlightMoves(ChessBoard board, boolean whitePerspective,
-                                      Collection<ChessPosition> highlights, ChessPosition origin) {
+                                      ChessPosition origin, Collection<ChessPosition> destinations) {
         printColumnLabels(whitePerspective);
 
         int startRow = whitePerspective ? 8 : 1;
@@ -62,30 +104,29 @@ public class ChessBoardPrinter {
         int stepRow = whitePerspective ? -1 : 1;
 
         for (int row = startRow; row != endRow; row += stepRow) {
-            System.out.print(row + " ");  // Row label
+            System.out.print(row + " ");
 
             for (int col = 1; col <= 8; col++) {
                 int file = whitePerspective ? col : 9 - col;
-
                 ChessPosition position = new ChessPosition(row, file);
                 ChessPiece piece = board.getPiece(position);
 
-                boolean isHighlighted = highlights != null && highlights.contains(position);
-                boolean isOrigin = origin != null && origin.equals(position);
-                boolean isLightSquare = (row + file) % 2 != 0;
+                boolean isOrigin = origin != null && position.equals(origin);
+                boolean isDestination = destinations != null && destinations.contains(position);
 
                 String bgColor;
-                if (isOrigin) {
-                    bgColor = SET_BG_COLOR_YELLOW;
-                } else if (isHighlighted) {
-                    bgColor = SET_BG_COLOR_GREEN;
+                if (isOrigin || isDestination) {
+                    bgColor = SET_BG_COLOR_MAGENTA; // unified highlight for both
                 } else {
+                    boolean isLightSquare = (row + file) % 2 != 0;
                     bgColor = isLightSquare ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_BLACK;
                 }
 
-                String textColor = piece == null
+                String textColor = (piece == null)
                         ? SET_TEXT_COLOR_WHITE
-                        : (piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE);
+                        : (piece.getTeamColor() == ChessGame.TeamColor.WHITE
+                        ? SET_TEXT_COLOR_RED
+                        : SET_TEXT_COLOR_BLUE);
 
                 String symbol = (piece == null) ? " " : getPieceLetter(piece);
                 System.out.print(bgColor + textColor + " " + symbol + " " + RESET_TEXT_COLOR + RESET_BG_COLOR);
@@ -96,12 +137,6 @@ public class ChessBoardPrinter {
 
         printColumnLabels(whitePerspective);
     }
-
-
-
-
-
-
 
     private static void printColumnLabels(boolean whitePerspective) {
         System.out.print("  ");

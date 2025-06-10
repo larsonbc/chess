@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ErrorMessage;
@@ -27,9 +28,10 @@ public class ConnectionManager {
         userGameMap.remove(username);
     }
 
-    public void sendLoadGame(String username, ChessGame game, int gameID, boolean sendToAll) throws IOException {
+    public void sendLoadGame(String username, ChessGame game, int gameID, ChessMove lastMove, boolean sendToAll) throws IOException {
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         loadGameMessage.setGame(game);
+        loadGameMessage.setLastMove(lastMove);
         String json = new Gson().toJson(loadGameMessage);
 
         for (var entry : connections.entrySet()) {

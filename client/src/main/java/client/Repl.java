@@ -105,11 +105,11 @@ public class Repl implements ServerMessageObserver {
             case LOAD_GAME -> {
                 LoadGameMessage msg = (LoadGameMessage) message;
                 stateHandler.getGameplayClient().updateGameState(msg.getGame());
-                System.out.println("\u001b[33m" + "Load game message"); // Red
+                stateHandler.setPreviousMove(msg.getLastMove());
+                System.out.println("\n");
+                stateHandler.getGameplayClient().redrawBoard(msg.getLastMove());
             }
-            default -> {
-                System.out.println("\u001b[33m" + "Received unknown message type."); // Yellow
-            }
+            default -> System.out.println("\u001b[33m" + "Received unknown message type."); // Yellow
         }
 
         printPrompt();
