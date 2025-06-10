@@ -104,6 +104,7 @@ public class Repl implements ServerMessageObserver {
             }
             case LOAD_GAME -> {
                 LoadGameMessage msg = (LoadGameMessage) message;
+                stateHandler.getGameplayClient().updateGameState(msg.getGame());
                 System.out.println("\u001b[33m" + "Load game message"); // Red
             }
             default -> {

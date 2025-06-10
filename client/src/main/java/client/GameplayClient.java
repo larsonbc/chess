@@ -151,4 +151,8 @@ public class GameplayClient {
         int colNum = col - 'a' + 1;
         return new ChessPosition(row, colNum);
     }
+
+    public void updateGameState(ChessGame updatedGame) {
+        this.gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), updatedGame);
+    }
 }
