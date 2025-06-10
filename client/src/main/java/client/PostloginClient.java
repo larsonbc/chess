@@ -121,7 +121,12 @@ public class PostloginClient {
             ChessGame game = gameData.game();
             String gameName = gameData.gameName();
             System.out.print("\u001b[0m"); // Reset any previous color
-            ChessBoardPrinter.printBoard(game.getBoard(), true);
+            //ChessBoardPrinter.printBoard(game.getBoard(), true);
+            stateHandler.setCurrentGameId(gameID);
+            stateHandler.setState(State.GAMEPLAY);
+            var ws = stateHandler.getWs();
+            ws.joinGame(stateHandler.getAuthToken(), gameID);
+            stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));
             return "Watching game: " + gameName;
         } else {
             return "Expected: <GAME ID>";

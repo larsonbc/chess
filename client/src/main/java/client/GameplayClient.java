@@ -49,11 +49,19 @@ public class GameplayClient {
         if (legalMoves == null || legalMoves.isEmpty()) {
             return "No legal moves for this piece";
         }
+        boolean isWhite = false;
+        if (stateHandler.getPlayerColor() == null) {
+            isWhite = true;
+        } else if (stateHandler.getPlayerColor().equals("WHITE")) {
+            isWhite = true;
+        } else {
+            isWhite = false;
+        }
         Set<ChessPosition> destinations = legalMoves.stream()
                 .map(ChessMove::getEndPosition)
                 .collect(Collectors.toSet());
         System.out.print("\u001b[0m");
-        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), position, destinations, null, null);
+        ChessBoardPrinter.highlightMoves(game.getBoard(), isWhite, position, destinations, null, null);
         return "";
     }
 
@@ -111,11 +119,19 @@ public class GameplayClient {
 
         System.out.print("\u001b[0m");
         ChessBoard board = gameData.game().getBoard();
-        boolean whitePerspective = stateHandler.getPlayerColor().equalsIgnoreCase("WHITE");
+        //boolean whitePerspective = stateHandler.getPlayerColor().equalsIgnoreCase("WHITE");
+        boolean isWhite = false;
+        if (stateHandler.getPlayerColor() == null) {
+            isWhite = true;
+        } else if (stateHandler.getPlayerColor().equals("WHITE")) {
+            isWhite = true;
+        } else {
+            isWhite = false;
+        }
         ChessPosition lastMoveOrigin = (lastMove != null) ? lastMove.getStartPosition() : null;
         ChessPosition lastMoveDestination = (lastMove != null) ? lastMove.getEndPosition() : null;
         // No current selection or legal moves to highlight; only showing the last move
-        ChessBoardPrinter.highlightMoves(board, whitePerspective,
+        ChessBoardPrinter.highlightMoves(board, isWhite,
                 null,              // selectedOrigin (yellow)
                 null,              // legalDestinations (green)
                 lastMoveOrigin,    // last move origin (magenta)
