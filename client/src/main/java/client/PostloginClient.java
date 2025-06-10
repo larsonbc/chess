@@ -96,7 +96,7 @@ public class PostloginClient {
             stateHandler.setPlayerColor(color);
             stateHandler.setState(State.GAMEPLAY);
             var ws = stateHandler.getWs();
-            ws.joinGame(stateHandler.getAuthToken(), gameID);
+            ws.joinGame(stateHandler.getAuthToken(), gameID, color);
             stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));
             return "Joined game: " + gameName + ", joined as " + params[1];
         } else {
@@ -125,7 +125,7 @@ public class PostloginClient {
             stateHandler.setCurrentGameId(gameID);
             stateHandler.setState(State.GAMEPLAY);
             var ws = stateHandler.getWs();
-            ws.joinGame(stateHandler.getAuthToken(), gameID);
+            ws.joinGame(stateHandler.getAuthToken(), gameID, null);
             stateHandler.setGameplayClient(new GameplayClient(stateHandler, gameData));
             return "Watching game: " + gameName;
         } else {

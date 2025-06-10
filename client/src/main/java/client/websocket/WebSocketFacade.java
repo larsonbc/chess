@@ -58,9 +58,9 @@ public class WebSocketFacade extends Endpoint {
 
     }
 
-    public void joinGame(String authToken, int gameID) {
+    public void joinGame(String authToken, int gameID, String color) {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID, color);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             throw new RuntimeException();
@@ -69,7 +69,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void leaveGame(String authToken, int gameID) {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             //this.session.close();
         } catch (IOException e) {
@@ -79,7 +79,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void resign(String authToken, int gameID) {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             throw new RuntimeException();
@@ -88,7 +88,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String authToken, int gameID, ChessMove move) {
         try {
-            var command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID);
+            var command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, null);
             command.setMove(move);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {

@@ -22,6 +22,7 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -209,7 +210,15 @@ public class WebSocketHandler {
         }
         ChessGame game = gameService.getGames().get(command.getGameID() - 1).game();
         connections.sendLoadGame(username, game, command.getGameID(), null, false);
-        var message = String.format("%s has joined the game", username);
+        //var message = String.format("%s has joined the game", username);
+        var message = "";
+        if (command.getColor() == null) {
+            message = String.format("%s has joined the game as observer", username);
+        } else if (Objects.equals(command.getColor(), "WHITE")) {
+            message = String.format("%s has joined the game as white", username);
+        } else {
+            message = String.format("%s has joined the game as black", username);
+        }
         connections.broadCastToGame(command.getGameID(), username, message);
     }
 
