@@ -8,6 +8,7 @@ import ui.ChessBoardPrinter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,15 @@ public class GameplayClient {
     }
 
     public String resign() {
-        return "resign";
+        System.out.print("Are you sure you want to resign? (yes/no): ");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine().trim().toLowerCase();
+
+        if (!input.equals("yes")) {
+            return "Resignation cancelled.";
+        }
+        stateHandler.getWs().resign(stateHandler.getAuthToken(), gameData.gameID());
+        return "You have resigned";
     }
 
     public String leave() {
