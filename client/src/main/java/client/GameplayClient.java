@@ -76,8 +76,13 @@ public class GameplayClient {
     }
 
     public String leave() {
+        stateHandler.getWs().leaveGame(stateHandler.getAuthToken(), gameData.gameID());
+        if (stateHandler.getPlayerColor() != null) {
+            stateHandler.setPlayerColor(null);
+        }
+        stateHandler.setCurrentGameId(null);
         stateHandler.setState(State.SIGNEDIN);
-        return "leave";
+        return "You have left the game";
     }
 
     public String help() {

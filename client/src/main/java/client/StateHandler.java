@@ -5,7 +5,7 @@ public class StateHandler {
     private State state = State.SIGNEDOUT;
     private String authToken;
     private GameplayClient gameplayClient;
-    private int currentGameId;
+    private Integer currentGameId;
     private String playerColor;
 
     public WebSocketFacade getWs() {
@@ -46,7 +46,7 @@ public class StateHandler {
         return currentGameId;
     }
 
-    public void setCurrentGameId(int currentGameId) {
+    public void setCurrentGameId(Integer currentGameId) {
         this.currentGameId = currentGameId;
     }
 
