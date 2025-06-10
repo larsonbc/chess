@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 import ui.ChessBoardPrinter;
@@ -28,7 +29,7 @@ public class GameplayClient {
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd) {
             case "highlight", "hi" -> highlightLegalMoves(params);
-            case "m", "move", "make" -> makeMove();
+            case "m", "move", "make" -> makeMove(params);
             case "r", "redraw" -> redrawBoard();
             case "res", "resign" -> resign();
             case "leave" -> leave();
@@ -38,7 +39,7 @@ public class GameplayClient {
 
     public String highlightLegalMoves(String... params) {
         if (params.length != 1) {
-            return "Expected: <input> (e.g. f5)";
+            return "Expected: <position> (e.g. f5)";
         }
         String input = params[0];
         if (input.length() != 2) {
@@ -47,7 +48,7 @@ public class GameplayClient {
         ChessGame game = gameData.game();
         ChessPosition position = convertToChessPosition(input);
         if (position == null) {
-            return "Invalid Chess Position. Please format as following:\n" +
+            return "Invalid Chess Position. Please format as follows:\n" +
                     "Letter (column) a-h followed by number 1-8 (row), e.g. f5";
         }
         Collection<ChessMove> legalMoves = game.validMoves(position);
@@ -62,8 +63,41 @@ public class GameplayClient {
         return "";
     }
 
-    public String makeMove() {
-        return "move";
+    public String makeMove(String... params) {
+        if (params.length < 2 || params.length > 3) {
+            return "Expected: <source> <destination> <optional promotion> (e.g. f5 e4 q)";
+        }
+        for (int i = 0; i < 2; i++) {
+            if (params[i].length() != 2) {
+                return "Invalid Chess Position";
+            }
+        }
+        //boolean promotion = false;
+        ChessPiece.PieceType promotionPiece = null;
+        if (params.length == 3) {
+            if (!params[2].matches("(?i)[qbnr]")) {
+                return "Invalid promotion piece. Promotion piece must be one of the following:\n" +
+                        "q, r, b, n ";
+            } else {
+                //promotion = true;
+                char pieceChar = Character.toLowerCase(params[2].charAt(0));
+                switch (pieceChar) {
+                    case 'q' -> promotionPiece = ChessPiece.PieceType.QUEEN;
+                    case 'r' -> promotionPiece = ChessPiece.PieceType.ROOK;
+                    case 'b' -> promotionPiece = ChessPiece.PieceType.BISHOP;
+                    case 'n' -> promotionPiece = ChessPiece.PieceType.KNIGHT;
+                }
+            }
+        }
+        ChessPosition origin = convertToChessPosition(params[0]);
+        ChessPosition destination = convertToChessPosition(params[1]);
+        if (origin == null || destination == null) {
+            return "Invalid Chess Position. Please format as follows:\n" +
+                    "Letter (column) a-h followed by number 1-8 (row), e.g. f5";
+        }
+        ChessMove move = new ChessMove(origin, destination, promotionPiece);
+        stateHandler.getWs().makeMove(stateHandler.getAuthToken(), gameData.gameID(), move);
+        return "";
     }
 
     public String redrawBoard() {
@@ -81,7 +115,7 @@ public class GameplayClient {
             return "Resignation cancelled.";
         }
         stateHandler.getWs().resign(stateHandler.getAuthToken(), gameData.gameID());
-        return "You have resigned";
+        return "";
     }
 
     public String leave() {
