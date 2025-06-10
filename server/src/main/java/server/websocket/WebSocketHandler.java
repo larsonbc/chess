@@ -197,9 +197,22 @@ public class WebSocketHandler {
             return;
         }
         connections.sendLoadGame(username, game, command.getGameID(), move, true);
-        //var message = String.format("%s has made a move", username);
         var message = String.format("%s makes move %s", username, move);
         connections.broadCastToGame(command.getGameID(), username, message);
+        //check game status and notify of status
+        ChessGame.TeamColor opponentColor = (playerColor == ChessGame.TeamColor.WHITE)
+                ? ChessGame.TeamColor.BLACK
+                : ChessGame.TeamColor.WHITE;
+        if (game.isInCheckmate(opponentColor)) {
+            connections.broadCastToGame(command.getGameID(), null,
+                    String.format("%s is in checkmate. %s wins!", opponentColor, playerColor));
+        } else if (game.isInStalemate(opponentColor)) {
+            connections.broadCastToGame(command.getGameID(), null,
+                    "The game ends in stalemate.");
+        } else if (game.isInCheck(opponentColor)) {
+            connections.broadCastToGame(command.getGameID(), null,
+                    String.format("%s is in check!", opponentColor));
+        }
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws IOException {
