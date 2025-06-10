@@ -52,7 +52,8 @@ public class ChessMove {
 //                ", endPosition=" + endPosition +
 //                ", promotionPiece=" + promotionPiece +
 //                '}';
-        return "" + endPosition;
+        //return "" + endPosition;
+        return startPosition + "" + endPosition;
     }
 
     @Override

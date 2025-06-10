@@ -197,7 +197,8 @@ public class WebSocketHandler {
             return;
         }
         connections.sendLoadGame(username, game, command.getGameID(), move, true);
-        var message = String.format("%s has made a move", username);
+        //var message = String.format("%s has made a move", username);
+        var message = String.format("%s makes move %s", username, move);
         connections.broadCastToGame(command.getGameID(), username, message);
     }
 

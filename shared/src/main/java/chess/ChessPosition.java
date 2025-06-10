@@ -40,7 +40,9 @@ public class ChessPosition {
 //                "row=" + row +
 //                ", col=" + col +
 //                '}';
-        return "" + row + ',' + col;
+        //return "" + row + ',' + col;
+        char fileChar = (char) ('a' + this.col - 1);
+        return "" + fileChar + this.row;
     }
 
     @Override
