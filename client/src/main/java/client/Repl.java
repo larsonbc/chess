@@ -1,7 +1,7 @@
 package client;
 
+import chess.ChessMove;
 import client.websocket.ServerMessageObserver;
-import com.google.gson.Gson;
 import server.ServerFacade;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -106,6 +106,7 @@ public class Repl implements ServerMessageObserver {
                 LoadGameMessage msg = (LoadGameMessage) message;
                 stateHandler.getGameplayClient().updateGameState(msg.getGame());
                 stateHandler.setPreviousMove(msg.getLastMove());
+                convertMove(msg.getLastMove());
                 System.out.println("\n");
                 stateHandler.getGameplayClient().redrawBoard(msg.getLastMove());
             }
@@ -113,5 +114,10 @@ public class Repl implements ServerMessageObserver {
         }
 
         printPrompt();
+    }
+
+    public String convertMove(ChessMove move) {
+        System.out.println(move);
+        return "";
     }
 }

@@ -95,8 +95,59 @@ public class ChessBoardPrinter {
 //    }
 
 
-    public static void highlightMoves(ChessBoard board, boolean whitePerspective,
-                                      ChessPosition origin, Collection<ChessPosition> destinations) {
+//    public static void highlightMoves(ChessBoard board, boolean whitePerspective,
+//                                      ChessPosition origin, Collection<ChessPosition> destinations) {
+//        printColumnLabels(whitePerspective);
+//
+//        int startRow = whitePerspective ? 8 : 1;
+//        int endRow = whitePerspective ? 0 : 9;
+//        int stepRow = whitePerspective ? -1 : 1;
+//
+//        for (int row = startRow; row != endRow; row += stepRow) {
+//            System.out.print(row + " ");
+//
+//            for (int col = 1; col <= 8; col++) {
+//                int file = whitePerspective ? col : 9 - col;
+//                ChessPosition position = new ChessPosition(row, file);
+//                ChessPiece piece = board.getPiece(position);
+//
+//                boolean isOrigin = origin != null && position.equals(origin);
+//                boolean isDestination = destinations != null && destinations.contains(position);
+//
+//                String bgColor;
+//                if (isOrigin || isDestination) {
+//                    bgColor = SET_BG_COLOR_MAGENTA; // unified highlight for both
+//                } else {
+//                    boolean isLightSquare = (row + file) % 2 != 0;
+//                    bgColor = isLightSquare ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_BLACK;
+//                }
+//
+//                String textColor = (piece == null)
+//                        ? SET_TEXT_COLOR_WHITE
+//                        : (piece.getTeamColor() == ChessGame.TeamColor.WHITE
+//                        ? SET_TEXT_COLOR_RED
+//                        : SET_TEXT_COLOR_BLUE);
+//
+//                String symbol = (piece == null) ? " " : getPieceLetter(piece);
+//                System.out.print(bgColor + textColor + " " + symbol + " " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+//            }
+//
+//            System.out.println(" " + row);
+//        }
+//
+//        printColumnLabels(whitePerspective);
+//    }
+
+
+
+    public static void highlightMoves(
+            ChessBoard board,
+            boolean whitePerspective,
+            ChessPosition selectedOrigin,                   // yellow (currently selected piece)
+            Collection<ChessPosition> legalDestinations,    // green (valid moves for selected piece)
+            ChessPosition lastMoveOrigin,                   // magenta (last move origin)
+            ChessPosition lastMoveDestination               // magenta (last move destination)
+    ) {
         printColumnLabels(whitePerspective);
 
         int startRow = whitePerspective ? 8 : 1;
@@ -111,17 +162,26 @@ public class ChessBoardPrinter {
                 ChessPosition position = new ChessPosition(row, file);
                 ChessPiece piece = board.getPiece(position);
 
-                boolean isOrigin = origin != null && position.equals(origin);
-                boolean isDestination = destinations != null && destinations.contains(position);
+                // Flags for square status
+                boolean isLastMoveOrigin = lastMoveOrigin != null && position.equals(lastMoveOrigin);
+                boolean isLastMoveDestination = lastMoveDestination != null && position.equals(lastMoveDestination);
+                boolean isSelectedOrigin = selectedOrigin != null && position.equals(selectedOrigin);
+                boolean isLegalDestination = legalDestinations != null && legalDestinations.contains(position);
 
+                // Determine background color
                 String bgColor;
-                if (isOrigin || isDestination) {
-                    bgColor = SET_BG_COLOR_MAGENTA; // unified highlight for both
+                if (isLastMoveOrigin || isLastMoveDestination) {
+                    bgColor = SET_BG_COLOR_MAGENTA;
+                } else if (isSelectedOrigin) {
+                    bgColor = SET_BG_COLOR_YELLOW;
+                } else if (isLegalDestination) {
+                    bgColor = SET_BG_COLOR_GREEN;
                 } else {
                     boolean isLightSquare = (row + file) % 2 != 0;
                     bgColor = isLightSquare ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_BLACK;
                 }
 
+                // Text color depends on piece color or empty
                 String textColor = (piece == null)
                         ? SET_TEXT_COLOR_WHITE
                         : (piece.getTeamColor() == ChessGame.TeamColor.WHITE

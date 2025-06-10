@@ -53,7 +53,7 @@ public class GameplayClient {
                 .map(ChessMove::getEndPosition)
                 .collect(Collectors.toSet());
         System.out.print("\u001b[0m");
-        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), position, destinations);
+        ChessBoardPrinter.highlightMoves(game.getBoard(), stateHandler.getPlayerColor().equals("WHITE"), position, destinations, null, null);
         return "";
     }
 
@@ -100,13 +100,27 @@ public class GameplayClient {
 //        ChessBoardPrinter.highlightMoves(gameData.game().getBoard(),stateHandler.getPlayerColor().equals("WHITE"), null, null);
 //        return "";
 
+//        System.out.print("\u001b[0m");
+//        ChessBoard board = gameData.game().getBoard();
+//        boolean whitePerspective = stateHandler.getPlayerColor().equalsIgnoreCase("WHITE");
+//        ChessPosition origin = (lastMove != null) ? lastMove.getStartPosition() : null;
+//        ChessPosition destination = (lastMove != null) ? lastMove.getEndPosition() : null;
+//        Collection<ChessPosition> highlights = (destination != null) ? List.of(destination) : null;
+//        ChessBoardPrinter.highlightMoves(board, whitePerspective, null, null, null, null);
+//        return "";
+
         System.out.print("\u001b[0m");
         ChessBoard board = gameData.game().getBoard();
         boolean whitePerspective = stateHandler.getPlayerColor().equalsIgnoreCase("WHITE");
-        ChessPosition origin = (lastMove != null) ? lastMove.getStartPosition() : null;
-        ChessPosition destination = (lastMove != null) ? lastMove.getEndPosition() : null;
-        Collection<ChessPosition> highlights = (destination != null) ? List.of(destination) : null;
-        ChessBoardPrinter.highlightMoves(board, whitePerspective, origin, highlights);
+        ChessPosition lastMoveOrigin = (lastMove != null) ? lastMove.getStartPosition() : null;
+        ChessPosition lastMoveDestination = (lastMove != null) ? lastMove.getEndPosition() : null;
+        // No current selection or legal moves to highlight; only showing the last move
+        ChessBoardPrinter.highlightMoves(board, whitePerspective,
+                null,              // selectedOrigin (yellow)
+                null,              // legalDestinations (green)
+                lastMoveOrigin,    // last move origin (magenta)
+                lastMoveDestination); // last move destination (magenta)
+
         return "";
     }
 
